@@ -1,3 +1,5 @@
+[![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.psa%3Atitan-project&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.psa%3Atitan-project) 
+
 # Titan project
 
 An attempt to make a **web interface** to facilitate development of **Logstash configuration files**
