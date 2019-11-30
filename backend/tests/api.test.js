@@ -231,7 +231,7 @@ describe("API Testing", function () {
 
       chai.request(app)
         .post('/file/upload')
-        .send(formData)
+        .send(formDataInitial)
         .end((err, res) => {
           expect(err).to.equal(null)
 
