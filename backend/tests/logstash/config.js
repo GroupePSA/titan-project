@@ -1,4 +1,4 @@
-const MAX_TIMEOUT = 30000;
+const MAX_TIMEOUT = 60000;
 
 var enable_slow_tests = process.env.SLOW_TEST || "true";
 enable_slow_tests = (["false", "f", "no"].includes(enable_slow_tests.toLowerCase()) ? false : true)
