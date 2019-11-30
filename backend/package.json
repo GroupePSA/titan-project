@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "mocha-parallel-tests ./tests --recursive",
+    "start": "node ./bin/www",
+    "test": "mocha ./tests --recursive --exit",
     "testAll": "./tests/test_all.sh",
-    "nodemon": "nodemon -L ./app.js | pino-pretty -c -t"
+    "nodemon": "nodemon -L ./bin/www | pino-pretty -c -t"
   },
   "author": "",
   "license": "MIT",
@@ -26,8 +26,8 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "mocha": "^6.2.2",
-    "mocha-parallel-tests": "^2.2.2",
     "nodemon": "^1.18.11",
     "pino-pretty": "^3.4.0",
     "request": "^2.88.0"

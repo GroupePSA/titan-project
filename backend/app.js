@@ -49,11 +49,4 @@ app.use('/guess_config', guessConfigRouter);
 app.use('/grok_tester', grokTesterRouter);
 app.use('/logstash', logstashRouter);
 
-// We start the server
-
-app.listen(constants.PORT, function () {
-    log.info({
-        "action": "application_start",
-        "port": constants.PORT
-    }, "Application started on port " + constants.PORT);
-})
+module.exports = app;

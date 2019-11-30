@@ -1,5 +1,11 @@
 var expect = require("chai").expect;
-var request = require("request");
+var chai = require("chai");
+var chaiHttp = require("chai-http");
+
+var app = require("../../app")
+
+chai.use(chaiHttp);
+chai.should();
 
 const config = require("./config")
 
@@ -7,7 +13,6 @@ describe("Logstash testing", function () {
 
   this.slow(100)
   this.timeout(config.MAX_TIMEOUT);
-  var url = "http://localhost:8081/logstash/start";
 
   it("should work with basic parameters on uploaded file", function (done) {
     if (!config.enable_slow_tests) this.skip()
@@ -18,25 +23,32 @@ describe("Logstash testing", function () {
       hash: filehash,
       file_content: "hi\nho\nha\nhou\nlol"
     }
-    request.post({ url: "http://localhost:8081/file/upload", body: formDataInitial, json: true }, function (error, response, body) {
-      expect(error).to.equal(null)
 
-      formData = {
-        filehash: filehash,
-        logstash_filter: "filter{mutate{add_field=>{'test'=> 'test2'}}}",
-        input_extra_fields: [{attribute: "type", value: "superTest"}],
-        logstash_version: config.logstashVersion
-      }
-      request.post({ url: url, body: formData, json: true }, function (error, response, body) {
-        expect(body.config_ok).to.equal(true);
-        expect(body.succeed).to.equal(true);
-        expect(response.statusCode).to.equal(200);
-        expect(body.job_result.stdout).to.match(/hou/);
-        expect(body.job_result.stdout).to.match(/ha/);
-        done();
+    chai.request(app)
+      .post('/file/upload')
+      .send(formDataInitial)
+      .end((err, res) => {
+        expect(err).to.equal(null)
+
+        formData = {
+          filehash: filehash,
+          logstash_filter: "filter{mutate{add_field=>{'test'=> 'test2'}}}",
+          input_extra_fields: [{ attribute: "type", value: "superTest" }],
+          logstash_version: config.logstashVersion
+        }
+
+        chai.request(app)
+          .post('/logstash/start')
+          .send(formData)
+          .end((err, res) => {
+            expect(res).to.have.status(200);
+            expect(res.body.config_ok).to.equal(true);
+            expect(res.body.succeed).to.equal(true);
+            expect(res.body.job_result.stdout).to.match(/hou/);
+            expect(res.body.job_result.stdout).to.match(/ha/);
+            done();
+          });
       });
-    });
-    
   });
-  
+
 });

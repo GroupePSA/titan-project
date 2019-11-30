@@ -1,4 +1,3 @@
-const PORT = process.env.PORT || 8081;
 const MAX_EXEC_TIMEOUT_S = process.env.MAX_EXEC_TIMEOUT_S || 120;
 const LOGSTASH_ROOT_DIR = process.env.LOGSTASH_ROOT_DIR || "/tmp/logstash/";
 const LOGSTASH_DATA_DIR = process.env.LOGSTASH_DATA_DIR || LOGSTASH_ROOT_DIR + "data/";
@@ -16,7 +15,6 @@ const CLEANUP_FILE_OLDER_THAN_MS = process.env.CLEANUP_FILE_OLDER_THAN_MS || 259
 const COMPUTE_GROK_PERFORMANCES = process.env.COMPUTE_GROK_PERFORMANCES  || 'true';
 
 module.exports = {
-    PORT: PORT,
     MAX_EXEC_TIMEOUT_S: MAX_EXEC_TIMEOUT_S,
     LOGSTASH_ROOT_DIR: LOGSTASH_ROOT_DIR,
     LOGSTASH_DATA_DIR: LOGSTASH_DATA_DIR,
