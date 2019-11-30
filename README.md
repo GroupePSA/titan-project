@@ -1,4 +1,4 @@
-[![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.psa%3Atitan-project&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.psa%3Atitan-project) 
+[![Build Status](https://travis-ci.org/GroupePSA/titan-project.svg?branch=master)](https://travis-ci.org/GroupePSA/titan-project) [![SonarCloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.psa%3Atitan-project&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.psa%3Atitan-project) 
 
 # Titan project
 
