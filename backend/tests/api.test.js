@@ -146,7 +146,6 @@ describe("API Testing", function () {
         .post('/grok_tester')
         .send(formData)
         .end((err, res) => {
-          console.log(res.body)
           expect(res).to.have.status(200);
           expect(res.body.config_ok).to.equal(true);
           expect(res.body.succeed).to.equal(true);
