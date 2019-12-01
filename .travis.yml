@@ -1,27 +1,23 @@
+---
 dist: bionic
-
 language: node_js
 node_js:
-  - 10
-
+- 10
 services:
-  - docker
-
+- docker
+git:
+  depth: false
 addons:
   sonarcloud:
-    organization: "psa"
-
+    organization: psa
 before_install:
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-
-  - sudo curl -Ls https://github.com/GroupePSA/log-parser/releases/download/v0.0.1/parser --output /usr/local/bin/parser && sudo chmod +x /usr/local/bin/parser
-
-  - docker-compose -f logstash/docker-compose.yml build logstash_6.8.3
-  - npm --prefix ./backend install
-
+- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+- sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+- sudo apt-get update
+- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+- sudo curl -Ls https://github.com/GroupePSA/log-parser/releases/download/v0.0.1/parser --output /usr/local/bin/parser && sudo chmod +x /usr/local/bin/parser
+- docker-compose -f logstash/docker-compose.yml build logstash_6.8.3
+- npm --prefix ./backend install
 script:
-  - npm --prefix ./backend test
-  - sonar-scanner
+- npm --prefix ./backend test
+- sonar-scanner
