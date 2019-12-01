@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "test": "mocha ./tests --recursive --exit",
-    "coverage": "nyc --reporter=lcov --reporter=text-lcov npm run test",
+    "coverage": "nyc --reporter=lcov npm run test",
     "testAll": "./tests/test_all.sh",
     "nodemon": "nodemon -L ./bin/www | pino-pretty -c -t"
   },
