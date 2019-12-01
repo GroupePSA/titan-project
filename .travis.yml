@@ -19,5 +19,5 @@ before_install:
 - docker-compose -f logstash/docker-compose.yml build logstash_6.8.3
 - npm --prefix ./backend install
 script:
-- npm --prefix ./backend test
+- npm --prefix ./backend run coverage
 - sonar-scanner

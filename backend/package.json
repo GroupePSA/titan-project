@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "test": "mocha ./tests --recursive --exit",
+    "coverage": "nyc --reporter=lcov --reporter=text-lcov npm run test",
     "testAll": "./tests/test_all.sh",
     "nodemon": "nodemon -L ./bin/www | pino-pretty -c -t"
   },
@@ -20,6 +21,7 @@
     "node-cache": "^4.2.0",
     "node-cron": "^2.0.3",
     "node-grok": "^2.0.3",
+    "nyc": "^14.1.1",
     "pino": "^5.13.6",
     "shell-quote": "^1.6.1",
     "uniqid": "^5.0.3"
