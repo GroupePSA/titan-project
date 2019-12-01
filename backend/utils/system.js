@@ -24,7 +24,7 @@ function writeStringToFile(log, filepath, data, callback) {
                 "state": "failed"
             }, "Unable to write data to file '" + filepath + "'");
         }
-        callback()
+        callback(err)
     });
 }
 
@@ -42,7 +42,7 @@ function deleteFile(log, filepath, callback) {
                 "path": filepath
             }, "Unable to delete file '" + filepath + "'");
         }
-        callback()
+        callback(err)
     });
 }
 
@@ -51,7 +51,7 @@ function deleteFile(log, filepath, callback) {
 function deleteFilesOlderThan(rootDirectory, duration_ms) {
     fs.readdir(rootDirectory, function(err, files) {
         files.forEach(function(file, index) {
-          filepath = path.join(rootDirectory, file)
+          var filepath = path.join(rootDirectory, file)
           fs.stat(filepath, function(err, stat) {
             if (err) {
                 logger.warn({
@@ -59,8 +59,8 @@ function deleteFilesOlderThan(rootDirectory, duration_ms) {
                     "state": "failed"
                 }, "Failed to get file stats '" + filepath + "' : " + err )
             } else if (!stat.isDirectory()) {
-                now = new Date().getTime();
-                endTime = new Date(stat.ctime).getTime() + duration_ms;
+                var now = new Date().getTime();
+                var endTime = new Date(stat.ctime).getTime() + duration_ms;
                 if (now > endTime) {
                     fs.unlink(filepath, function (err) {
                         if(err) {

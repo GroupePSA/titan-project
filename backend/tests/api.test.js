@@ -53,6 +53,62 @@ describe("API Testing", function () {
 
       });
 
+      it("with invalid hash format", function (done) {
+        formData = {
+          "filehash": "non sha-512 hash"
+        }
+
+        chai.request(app)
+          .post('/logstash/start')
+          .send(formData)
+          .end((err, res) => {
+            expect(res).to.have.status(400);
+            expect(res.body.config_ok).to.equal(false);
+            expect(res.body.succeed).to.equal(false);
+            expect(res.body.missing_fields).to.contain("filehash_format");
+            done();
+          });
+      });
+
+      it("with empty custom codec", function (done) {
+        formData = {
+          "custom_codec": ""
+        }
+
+        chai.request(app)
+          .post('/logstash/start')
+          .send(formData)
+          .end((err, res) => {
+            expect(res).to.have.status(400);
+            expect(res.body.config_ok).to.equal(false);
+            expect(res.body.succeed).to.equal(false);
+            expect(res.body.missing_fields).to.contain("custom_codec");
+            done();
+          });
+      });
+
+      it("with empty extra fields argument", function (done) {
+        if (!config.enable_slow_tests) this.skip()
+    
+        formData = {
+          input_data: "hi\nho\nha\nhou\nlol",
+          logstash_filter: "filter mutate{add_field=>{'test'=> 'test2'}}}",
+          input_extra_fields: [{ attribute: "", value: "superTest" }],
+          logstash_version: config.logstashVersion
+        }
+    
+        chai.request(app)
+          .post('/logstash/start')
+          .send(formData)
+          .end((err, res) => {
+            expect(res).to.have.status(400);
+            expect(res.body.config_ok).to.equal(false);
+            expect(res.body.succeed).to.equal(false);
+            expect(res.body.missing_fields).to.contain("input_extra_fields");
+            done();
+          });
+      });
+
       it("with missing parameters", function (done) {
         formData = {
           input_data: "hi\nho\nha\nhou\nlol"
@@ -185,6 +241,22 @@ describe("API Testing", function () {
         });
     });
 
+    it("fail with empty parameters", function (done) {
+      formData = {
+        line: '',
+        grok_pattern: ""
+      }
+      chai.request(app)
+        .post('/grok_tester')
+        .send(formData)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body.config_ok).to.equal(true);
+          expect(res.body.succeed).to.equal(false);
+          done();
+        });
+    });
+
     it("don't work with missing parameters", function (done) {
       formData = {
       }
@@ -217,6 +289,20 @@ describe("API Testing", function () {
           expect(res.body.succeed).to.equal(true);
           expect(res.body.logstash_filter).to.equal('filter {\n\n  grok {\n    match => {\n      "message" => "%{GREEDYDATA:text}"\n    }\n  }\n}')
           expect(res.body.custom_codec).to.equal('')
+          done();
+        });
+    });
+
+    it("guess config without parameters", function (done) {
+      formData = {
+      }
+
+      chai.request(app)
+        .post('/guess_config')
+        .send(formData)
+        .end((err, res) => {
+          expect(res).to.have.status(400);
+          expect(res.body.config_ok).to.equal(false);
           done();
         });
     });
@@ -273,6 +359,19 @@ describe("API Testing", function () {
             expect(res).to.have.status(200);
             expect(res.body.config_ok).to.equal(true);
             expect(res.body.succeed).to.equal(true);
+            done();
+          });
+      });
+
+      it("fail without parameters", function (done) {
+        formData = {
+        }
+        chai.request(app)
+          .post('/config/store')
+          .send(formData)
+          .end((err, res) => {
+            expect(res).to.have.status(400);
+            expect(res.body.config_ok).to.equal(false);
             done();
           });
       });
@@ -359,6 +458,21 @@ describe("API Testing", function () {
             expect(res).to.have.status(200);
             expect(res.body.config_ok).to.equal(true);
             expect(res.body.succeed).to.equal(true);
+            done();
+          });
+      });
+
+      it("store a logfile with bad hash", function (done) {
+        formData = {
+          hash: "not sha-512",
+          file_content: "my log file content\n and another line"
+        }
+        chai.request(app)
+          .post('/file/upload')
+          .send(formData)
+          .end((err, res) => {
+            expect(res).to.have.status(400);
+            expect(res.body.config_ok).to.equal(false);
             done();
           });
       });
