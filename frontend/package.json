@@ -1,0 +1,59 @@
+{
+  "name": "titan-project-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node ./node_modules/frontend-dependencies/index.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "frontend-dependencies": "^1.1.7"
+  },
+  "frontendDependencies": {
+    "target": "static/",
+    "packages": {
+      "jquery": {            
+          "version": "3.3.1",
+          "src": "dist/*",
+          "target": "static/jquery"
+      },
+      "toastr": {            
+        "version": "2.1.4",
+        "src": "build/*",
+        "target": "static/toastr"
+      },
+      "store": {            
+        "version": "2.0.12",
+        "src": "dist/*",
+        "target": "static/store"
+      },
+      "bootstrap": {            
+        "version": "4.0.0",
+        "src": "dist/*",
+        "target": "static/bootstrap"
+      },
+      "bootswatch": {            
+        "version": "4.3.1",
+        "src": "{dist/darkly/,dist/flatly/}",
+        "target": "static/bootswatch"
+      },
+      "node-forge": {            
+        "version": "0.7.0",
+        "src": "dist/*",
+        "target": "static/forge"
+      },
+      "ace-builds": {            
+        "version": "1.4.3",
+        "src": "src-min-noconflict/"
+      },
+      "@fortawesome/fontawesome-free": {            
+        "version": "5.8.1",
+        "src": "*",
+        "target": "static/fontawesome"
+      }
+    }
+  }
+}

@@ -69,13 +69,13 @@ vagrant ssh
 cd /vagrant/logstash
 docker-compose build
 
+# Go into the frontend directory
+npm install
+npm run postinstall
+
 # Go into the backend directory
 cd /vagrant/backend
-
-# Install npm requirements
 npm install
-
-# Run the backend
 npm run nodemon
 ```
 
