@@ -284,6 +284,10 @@ function findParsingOptimizationAdvices(parent, array) {
         
         $("#data_explorer_container").removeClass("d-none")
         $("#data_explorer").empty()
+
+        // To to cleaner : consider those fields as exported
+        fields_characteristics = keys
+        totalRealEventNumber = realEventNumber
         
         for(key in keys) {
             str = '<div class="col-lg-3">'
@@ -304,7 +308,7 @@ function findParsingOptimizationAdvices(parent, array) {
             }
 
             str += "</br><u><p>Top 5 values:</p></u><ul class='list-group'>"
-            var values = createTop5Values(keys[key]["values_occurences"])
+            var values = createTopXValues(keys[key]["values_occurences"], 5)
             for (i in values) {
                 if (i > 5) {
                     break
@@ -332,7 +336,7 @@ function findParsingOptimizationAdvices(parent, array) {
     }
 }
 
-function createTop5Values(dict) {
+function createTopXValues(dict, x) {
 var items = Object.keys(dict).map(function(key) {
     return [key, dict[key]];
   });
@@ -341,7 +345,7 @@ var items = Object.keys(dict).map(function(key) {
     return second[1] - first[1];
   });
   
-  return items.slice(0, 5)
+  return items.slice(0, x)
 }
 
 // Escape string characters to build a Regex

@@ -299,6 +299,53 @@ function buildHumanSummary(config) {
         summary += "\n```\n"
     }
 
+    summary += "\n## Output\n"
+
+    var output_launched = false
+    var summary_append = ""
+
+    if(typeof fields_characteristics !== 'undefined' && fields_characteristics.length != 0) {
+        output_launched = true
+        summary_append += "\n### Output characteristics\n"
+        summary_append += "\n| Field | Type | In % of events | Sample |\n"
+        summary_append += "|-------|------|----------------|--------|\n"
+        for(var field in fields_characteristics) {
+            field_characteristic = fields_characteristics[field]
+            field_presence = "?"
+            if(typeof totalRealEventNumber !== 'undefined') {
+                field_presence = parseFloat(field_characteristic["occurence"]/totalRealEventNumber*100).toFixed(2)
+            }
+            mostPresentValues = createTopXValues(field_characteristic["values_occurences"], 1)
+            value = "undefined"
+            if (mostPresentValues[0] != undefined) {
+                value = String(mostPresentValues[0][0]).substring(0, 100)
+            }
+            summary_append += "|" + escapeHtml(field) + "|" + escapeHtml(field_characteristic["types"].join(", "))  + "|" + escapeHtml(field_presence)  + "|" + escapeHtml(value) + "|\n"
+        }
+    }
+
+    logstash_output_json = getLogstashOutputJson()
+    if (logstash_output_json.trim() != "") {
+        output_launched = true
+        logstash_output_json = logstash_output_json.split('\n').slice(0, 5)
+        summary_append += "\n### First 5 events parsed\n"
+        summary_append += "\n```json\n"
+        for(var i in logstash_output_json) {
+            event = logstash_output_json[i]
+            eventBeautiful = JSON.stringify(JSON.parse(event), null, 4);
+            summary_append += eventBeautiful + "\n"
+        }
+        summary_append += "\n```\n"
+    }
+
+    if (!output_launched) {
+        summary += "\n> No launch was done, can't provide output details\n"
+    } else {
+        summary += "\n**Logstash version**: " + $('#logstash_version :selected').text() + "\n"
+    }
+
+    summary += summary_append
+
     return summary
 }
 
