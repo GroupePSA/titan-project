@@ -14,6 +14,13 @@ var whatsup = [
             "Well, that window",
             "Custom pattern box is now displayed in minimalist mode"
         ]
+    },
+    {
+        version: 3,
+        date: "4 december 2019",
+        news: [
+            "We can now export to Human mode summary of current configuration"
+        ]
     }
 ]
 
