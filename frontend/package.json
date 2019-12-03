@@ -53,6 +53,11 @@
         "version": "5.8.1",
         "src": "*",
         "target": "static/fontawesome"
+      },
+      "showdown": {
+        "version": "1.9.1",
+        "src": "dist/*",
+        "target": "static/showdown"
       }
     }
   }

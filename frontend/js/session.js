@@ -154,11 +154,22 @@ function saveConfigToFile() {
 
 // Function to save current user session to a usable human format
 
-function exportConfigToHuman() {
+function exportConfigToHuman(format) {
     saveSession()
     var config = getConfig()
-    data = buildHumanSummary(config)
-    saveToFile(data, "titan-project-description.md", "text/markdown")
+    summary = buildHumanSummary(config)
+
+    if(format == "markdown") {
+        saveToFile(summary, "titan-project-description.md", "text/markdown")
+    } else { // Html
+        converter = new showdown.Converter()
+        converter.setFlavor('github');
+        html = converter.makeHtml(summary);
+
+        var newWin = open('url','Logstash configuration summary');
+        newWin.document.write(html);
+    }
+
 }
 
 // Share current user configuration
@@ -253,7 +264,7 @@ function buildHumanSummary(config) {
     var summary = "# Logstash configuration summary\n"
 
     summary += "\n## Input\n"
-    
+
     summary += "\n### Data sample\n"
     if(config.input_data.trim().length == 0) {
         summary += "\n> No data provided\n"
