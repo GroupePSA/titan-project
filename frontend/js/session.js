@@ -152,6 +152,15 @@ function saveConfigToFile() {
     saveToFile(configString, "titan-project-config.json", "application/json")
 }
 
+// Function to save current user session to a usable human format
+
+function exportConfigToHuman() {
+    saveSession()
+    var config = getConfig()
+    data = buildHumanSummary(config)
+    saveToFile(data, "titan-project-description.md", "text/markdown")
+}
+
 // Share current user configuration
 
 function shareConf() {
@@ -236,6 +245,50 @@ function getConfigBackend(hash, callback) {
             jobFailed()
         }
     });
+}
+
+// Build a human summary for current user configuration
+
+function buildHumanSummary(config) {
+    var summary = "# Logstash configuration summary\n"
+
+    summary += "\n## Input\n"
+    
+    summary += "\n### Data sample\n"
+    if(config.input_data.trim().length == 0) {
+        summary += "\n> No data provided\n"
+    } else {
+        summary += "\n```\n"
+        summary += config.input_data
+        summary += "\n```\n"
+    }
+    if(config.custom_codec.trim().length != 0) {
+        summary += "\n### Codec\n"
+        summary += "\n```\n"
+        summary += config.custom_codec
+        summary += "\n```\n"
+    }
+    if(config.input_fields.length != 0) {
+        summary += "\n### Input fields\n"
+        summary += "\n| Attribute | Value |\n"
+        summary += "|-----------|-------|\n"
+        for(var i = 0 ; i < config.input_fields.length ; i++) {
+            element = config.input_fields[i]
+            summary += "|" + escapeHtml(element['attribute']) + "|" + escapeHtml(element['value']) + "|\n"
+        }
+    }
+
+    summary += "\n## Filter\n"
+
+    if(config.logstash_filter.trim().length == 0) {
+        summary += "\n> No data provided\n"
+    } else {
+        summary += "\n```ruby\n"
+        summary += config.logstash_filter
+        summary += "\n```\n"
+    }
+
+    return summary
 }
 
 // A Trigger to copy the share link text when user click on the button
