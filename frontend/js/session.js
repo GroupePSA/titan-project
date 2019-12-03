@@ -15,7 +15,7 @@ function checkRemoteFile() {
 
 // Save current user session
 function saveSession() {
-    console.log("Saving session into cookie")
+    console.debug("Saving session into cookie")
     var session = {
         minimalist: ($('#css_theme_minimalist').attr('href').indexOf('nominimalist.css') != -1 ? false : true),
         theme: ($('#css_theme_bootstrap').attr('href').indexOf('flatly') != -1 ? "white" : "black"),
@@ -44,7 +44,7 @@ function saveSession() {
 
 // Load a config for user
 function loadConfig(session) {
-    console.log("Loading user config")
+    console.debug("Loading user config")
 
     inputEditor.getSession().setValue(session.input_data, -1)
     $('#custom_logstash_patterns_input').val(session.custom_logstash_patterns)
@@ -81,7 +81,7 @@ function loadSession(session) {
         session = store.get('session');
     }
     if (session != undefined) {
-        console.log("Loading user session")
+        console.debug("Loading user session")
         session.theme == "white" ? enableWhiteTheme() : enableBlackTheme()
         if (session.minimalist) {
             enableMinimalistMode()
@@ -114,7 +114,7 @@ function loadSession(session) {
             loadConfig(session)
         }
     } else {
-        console.log("No cookie for session found")
+        console.debug("No cookie for session found")
         sessionFound = false
     }
 

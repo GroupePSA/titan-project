@@ -137,7 +137,7 @@ function updateExamplesDescription() {
     if(example != undefined) {
         $("#example_description").text(example.description)
     } else {
-        console.log("Unable to find the example")
+        console.debug("Unable to find the example")
     }
 }
 
@@ -171,7 +171,7 @@ urlExists( extra_examples_url, function(exists) {
             initExamples()
     });
     } else {
-        console.log("No extra examples found")
+        console.debug("No extra examples found")
         initExamples()
     }
 })

@@ -15,41 +15,41 @@
   "frontendDependencies": {
     "target": "static/",
     "packages": {
-      "jquery": {            
-          "version": "3.3.1",
-          "src": "dist/*",
-          "target": "static/jquery"
+      "jquery": {
+        "version": "3.3.1",
+        "src": "dist/*",
+        "target": "static/jquery"
       },
-      "toastr": {            
+      "toastr": {
         "version": "2.1.4",
         "src": "build/*",
         "target": "static/toastr"
       },
-      "store": {            
+      "store": {
         "version": "2.0.12",
         "src": "dist/*",
         "target": "static/store"
       },
-      "bootstrap": {            
+      "bootstrap": {
         "version": "4.0.0",
         "src": "dist/*",
         "target": "static/bootstrap"
       },
-      "bootswatch": {            
+      "bootswatch": {
         "version": "4.3.1",
         "src": "{dist/darkly/,dist/flatly/}",
         "target": "static/bootswatch"
       },
-      "node-forge": {            
+      "node-forge": {
         "version": "0.7.0",
         "src": "dist/*",
         "target": "static/forge"
       },
-      "ace-builds": {            
+      "ace-builds": {
         "version": "1.4.3",
         "src": "src-min-noconflict/"
       },
-      "@fortawesome/fontawesome-free": {            
+      "@fortawesome/fontawesome-free": {
         "version": "5.8.1",
         "src": "*",
         "target": "static/fontawesome"

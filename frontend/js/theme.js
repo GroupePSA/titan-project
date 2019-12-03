@@ -18,7 +18,7 @@ function enableBlackTheme() {
   editor.setTheme("ace/theme/dracula");
   inputEditor.setTheme("ace/theme/dracula");
 
-  console.log("Enable black theme")
+  console.debug("Enable black theme")
 }
 
 // Enable the white theme
@@ -35,7 +35,7 @@ function enableWhiteTheme() {
   editor.setTheme("ace/theme/clouds");
   inputEditor.setTheme("ace/theme/chrome");
 
-  console.log("Enable white theme")
+  console.debug("Enable white theme")
 }
 
 // Change theme button rtrigger
@@ -56,14 +56,14 @@ $('#change_theme').click(function () {
 function enableMinimalistMode() {
   $('#css_theme_minimalist').attr('href', './css/custom-minimalist.css');
 
-  console.log("Enable minimalist mode")
+  console.debug("Enable minimalist mode")
 }
 
 // Disable the minimalist mode
 function disableMinimalistMode() {
   $('#css_theme_minimalist').attr('href', './css/custom-nominimalist.css');
 
-  console.log("Disable minimalist mode")
+  console.debug("Disable minimalist mode")
 }
 
 // Change minimalist mode button trigger
@@ -86,7 +86,7 @@ function enableFullscreenMode() {
   $('#main_container').removeClass("container")
   $('#main_container').addClass("container-fluid")
 
-  console.log("Enabled fullscreen mode")
+  console.debug("Enabled fullscreen mode")
 }
 
 // Disable the fullscreen mode
@@ -94,7 +94,7 @@ function disableFullscreenMode() {
   $('#main_container').removeClass("container-fluid")
   $('#main_container').addClass("container")
 
-  console.log("Disabled fullscreen mode")
+  console.debug("Disabled fullscreen mode")
 }
 
 // Change fullscreen mode button trigger
@@ -117,14 +117,14 @@ $('#change_fullscreen').click(function () {
 function enableTextWrappingMode() {
   $('#css_theme_text_wrapping').attr('href', './css/custom-text-wrapping.css');
 
-  console.log("Enabled text wrapping mode")
+  console.debug("Enabled text wrapping mode")
 }
 
 // Disable the text wrapping mode
 function disableTextWrappingMode() {
   $('#css_theme_text_wrapping').attr('href', './css/custom-no-text-wrapping.css');
 
-  console.log("Disabled text wrapping mode")
+  console.debug("Disabled text wrapping mode")
 }
 
 // Change text wrapping mode button trigger
@@ -148,14 +148,14 @@ var enableParsingAdvices = true
 function enableParsingAdvicesMode() {
   enableParsingAdvices = true
 
-  console.log("Enabled parsing advices mode")
+  console.debug("Enabled parsing advices mode")
 }
 
 // Disable the parsing advices mode
 function disableParsingAdvicesMode() {
   enableParsingAdvices = false
 
-  console.log("Disabled parsing advices mode")
+  console.debug("Disabled parsing advices mode")
 }
 
 // Change text wrapping mode button trigger
