@@ -20,4 +20,5 @@ before_install:
 - npm --prefix ./backend install
 script:
 - npm --prefix ./backend run coverage
+- docker-compose build
 - sonar-scanner
