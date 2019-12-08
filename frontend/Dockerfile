@@ -21,7 +21,7 @@ RUN rm -rf /var/lib/{apt,dpkg,cache,log}/
 RUN rm -rf /var/lib/apt/lists/*
 
 COPY . /usr/share/nginx/html
-COPY --from=builder /app/static frontend/static
+COPY --from=builder /app/static /usr/share/nginx/html/static
 
 ARG BACKENDHOST="http://localhost:8081"
 ARG ENABLE_NEWS="true"
