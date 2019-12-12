@@ -185,6 +185,7 @@ function findParsingOptimizationAdvices(parent, array) {
                             "types": [],
                             "guessType": [],
                             "occurence": 0,
+                            "canBeTrim": false,
                             "min": 1000000,
                             "max": -9999999,
                             "avg": 0,
@@ -200,6 +201,9 @@ function findParsingOptimizationAdvices(parent, array) {
                         var valueTypeGuessed = guessStringType(value)
                         if (!keys[key]["guessType"].includes(valueTypeGuessed)) {
                             keys[key]["guessType"].push(valueTypeGuessed)
+                        }
+                        if(valueTypeGuessed == "string" && value.trim() != value) {
+                            keys[key]["canBeTrim"] = true
                         }
                     } else if (valueType == "object") {
                         if (!(key in subEvents)) {
@@ -267,6 +271,11 @@ function findParsingOptimizationAdvices(parent, array) {
             advicesShouldBeShown = true
             str = '<li>Field <a href="#output" onclick="applyFilter(\'' + key + '\')">' + fieldname + "</a>"
             str += " is an <b>array</b>. Be aware that not many visualizations allow use of that kind of field in Kibana.</li>"
+            $("#parsing_advices").append(str);
+        } else if (keys[key]["types"].length == 1 && keys[key]["types"][0] == "string" && keys[key]["canBeTrim"]) {
+            advicesShouldBeShown = true
+            str = '<li>Value of field <a href="#output" onclick="applyFilter(\'' + key + '\')">' + fieldname + "</a>"
+            str += " could probably be <b>trimed</b>, as it sometime start or end with blanck characters</li>"
             $("#parsing_advices").append(str);
         }
     }
