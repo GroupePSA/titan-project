@@ -21,6 +21,7 @@ function saveSession() {
         theme: ($('#css_theme_bootstrap').attr('href').indexOf('flatly') != -1 ? "white" : "black"),
         fullscreen: ($('#main_container').hasClass("container") ? false : true),
         text_wrapping: ($('#css_theme_text_wrapping').attr('href').indexOf('no-text-wrapping.css') != -1 ? false : true),
+        editor_wrapping: editor.getSession().getUseWrapMode(),
         enable_parsing_advices: enableParsingAdvices,
         logstash_version: $('#logstash_version :selected').text(),
         input_editor_height: $('#' + inputEditor.container.id).css('height'),
@@ -99,6 +100,11 @@ function loadSession(session) {
             enableTextWrappingMode()
         } else {
             disableTextWrappingMode()
+        }
+        if(session.editor_wrapping) {
+            enableEditorWrappingMode()
+        } else {
+            disableEditorWrappingMode()
         }
         if(session.enable_parsing_advices) {
             enableParsingAdvicesMode()

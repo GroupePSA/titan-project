@@ -146,6 +146,37 @@ $('#change_text_wrapping').click(function () {
   }
 });
 
+// Editor wrapping mode
+
+// Enable the editor wrapping mode
+function enableEditorWrappingMode() {
+  editor.getSession().setUseWrapMode(true)
+  inputEditor.getSession().setUseWrapMode(true)
+
+  console.debug("Enabled editor wrapping mode")
+}
+
+// Disable the editor wrapping mode
+function disableEditorWrappingMode() {
+  editor.getSession().setUseWrapMode(false)
+  inputEditor.getSession().setUseWrapMode(false)
+
+  console.debug("Disabled editor wrapping mode")
+}
+
+// Change editor wrapping mode button trigger
+$('#change_editor_wrapping').click(function () {
+  if (!editor.getSession().getUseWrapMode()) {
+    enableEditorWrappingMode()
+    saveSession()
+    toastr.success("Enabled editor wrapping line mode", "Success")
+  } else {
+    disableEditorWrappingMode()
+    saveSession()
+    toastr.success("Disabled editor wrapping line mode", "Success")
+  }
+});
+
 // Parsing advices mode
 
 var enableParsingAdvices = true
