@@ -135,10 +135,13 @@ ace.define("ace/mode/logstash_highlight_rules", ["require", "exports", "module",
                             token: "constant.language.escape",
                             regex: /\\(?:[nsrtvfbae'"\\]|c.|C-.|M-.(?:\\C-.)?|[0-7]{3}|x[\da-fA-F]{2}|u[\da-fA-F]{4})/
                         },{
-                            token: ["string", "support.class", "string", "constant.language.boolean", "string"],
+                            token: ["string", "keyword.type", "string", "constant.language.boolean", "string"],
                             regex: "(%{)([a-zA-Z0-9_]+)(:)([@a-zA-Z0-9_]+)(})"
                         },{
-                            token: ["string", "support.class", "string"],
+                            token: ["string", "keyword.type", "string", "constant.language.boolean", "string"],
+                            regex: "(%{)([a-zA-Z0-9_]+)(:)((?:\[[@a-zA-Z0-9_]+\])+)(})"
+                        },{
+                            token: ["string", "keyword.type", "string"],
                             regex: "(%{)([A-Z0-9_]+)(})"
                         },{
                             token: ["string", "constant.language.boolean", "string"],
@@ -155,7 +158,7 @@ ace.define("ace/mode/logstash_highlight_rules", ["require", "exports", "module",
                             token: "constant.language.boolean",
                             regex: "(%{)([?+&]?[@a-zA-Z0-9_]+(/\\d+)?)(})"
                         },{
-                            token: "support.class",
+                            token: "keyword.type",
                             regex: "(integer_eu|integer|float_eu|float|string|boolean|int)",
                         },{
                             token: ["string", "constant.language.boolean", "string"],
