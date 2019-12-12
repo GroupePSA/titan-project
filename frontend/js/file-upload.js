@@ -26,10 +26,10 @@ function fileUploadEnabled(hash, content) {
     inputEditor.setReadOnly(true)
 
     if (content != undefined) {
-        var logfile_content_cut = "<-- Only the first 50 lines of your log file are displayed here -->\n"
+        var logfile_content_cut = "<-- Only the first 200 lines of your log file are displayed here -->\n"
 
         var all_lines = content.split('\n')
-        var lines_sliced = all_lines.slice(0, 50)
+        var lines_sliced = all_lines.slice(0, 200)
 
         logfile_content_cut += lines_sliced.join('\n')
 
