@@ -169,6 +169,8 @@ function findParsingOptimizationAdvices(parent, array) {
     var fieldsToSkip = []
     var realEventNumber = 0
 
+    var fieldConversionBlacklist = ["port"]
+
     if (isRootEventLevel) {
         fieldsToSkip = ["@timestamp", "@version", "host", "message"]
     }
@@ -262,7 +264,7 @@ function findParsingOptimizationAdvices(parent, array) {
             str = '<li>Field <a href="#output" onclick="applyFilter(\'' + key + '\')">' + fieldname + "</a>"
             str += " got <b>multiple types</b> : " + keys[key]["types"].join(", ") + "</li>"
             $("#parsing_advices").append(str);
-        } else if (keys[key]["types"].length == 1 && keys[key]["guessType"].length == 1 && keys[key]["types"][0] != keys[key]["guessType"][0]) {
+        } else if (keys[key]["types"].length == 1 && keys[key]["guessType"].length == 1 && keys[key]["types"][0] != keys[key]["guessType"][0] && !fieldConversionBlacklist.includes(key)) {
             advicesShouldBeShown = true
             str = '<li>Field <a href="#output" onclick="applyFilter(\'' + key + '\')">' + fieldname + "</a>"
             str += " of type " + keys[key]["types"][0] + " could probably be <b>convert</b> into " + keys[key]["guessType"][0] + "</li>"
