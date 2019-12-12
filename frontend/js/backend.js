@@ -261,22 +261,22 @@ function findParsingOptimizationAdvices(parent, array) {
         var str = ""
         if (keys[key]["types"].length > 1) {
             advicesShouldBeShown = true
-            str = '<li>Field <a href="#output" onclick="applyFilter(\'' + key + '\')">' + fieldname + "</a>"
+            str = '<li>Field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
             str += " got <b>multiple types</b> : " + keys[key]["types"].join(", ") + "</li>"
             $("#parsing_advices").append(str);
         } else if (keys[key]["types"].length == 1 && keys[key]["guessType"].length == 1 && keys[key]["types"][0] != keys[key]["guessType"][0] && !fieldConversionBlacklist.includes(key)) {
             advicesShouldBeShown = true
-            str = '<li>Field <a href="#output" onclick="applyFilter(\'' + key + '\')">' + fieldname + "</a>"
+            str = '<li>Field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
             str += " of type " + keys[key]["types"][0] + " could probably be <b>convert</b> into " + keys[key]["guessType"][0] + "</li>"
             $("#parsing_advices").append(str);
         } else if (keys[key]["types"].length == 1 && keys[key]["types"][0] == "array") {
             advicesShouldBeShown = true
-            str = '<li>Field <a href="#output" onclick="applyFilter(\'' + key + '\')">' + fieldname + "</a>"
+            str = '<li>Field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
             str += " is an <b>array</b>. Be aware that not many visualizations allow use of that kind of field in Kibana.</li>"
             $("#parsing_advices").append(str);
         } else if (keys[key]["types"].length == 1 && keys[key]["types"][0] == "string" && keys[key]["canBeTrim"]) {
             advicesShouldBeShown = true
-            str = '<li>Value of field <a href="#output" onclick="applyFilter(\'' + key + '\')">' + fieldname + "</a>"
+            str = '<li>Value of field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
             str += " could probably be <b>trimed</b>, as it sometime start or end with blanck characters</li>"
             $("#parsing_advices").append(str);
         }
@@ -285,7 +285,7 @@ function findParsingOptimizationAdvices(parent, array) {
     for (key in badFieldNames) {
         fieldname = (isRootEventLevel ? "" : parent + ".") + badFieldNames[key]
         advicesShouldBeShown = true
-        str = '<li>Fieldname <a href="#output" onclick="applyFilter(\'' + badFieldNames[key] + '\')">' + fieldname + "</a>"
+        str = '<li>Fieldname <a href="#output" onclick="applyFilterFieldname(\'' + badFieldNames[key] + '\')">' + fieldname + "</a>"
         str += " should contains only characters in range A-Z, a-z, 0-9, or _</li>"
         $("#parsing_advices").append(str);
     }
@@ -539,6 +539,13 @@ function applyFilter(filter, reverse) {
     $('#filter_display').val(filter)
 
     refreshLogstashLogDisplay()
+}
+
+// Apply a custom filter that will be surround by "<value>"
+// to match the json format
+
+function applyFilterFieldname(filter) {
+    applyFilter('"' + filter + '"')
 }
 
 // Manage result of Logstash process
