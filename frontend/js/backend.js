@@ -107,12 +107,8 @@ function logstashParsingProblem() {
 
 function guessStringType(str) {
 
-    if (/^[0-9]+$/.test(str)) {
-        return "integer"
-    }
-
-    if (/^[0-9]+\.[0-9]+$/.test(str)) {
-        return "float"
+    if (/^[0-9]+(\.[0-9]+)?$/.test(str)) {
+        return "number"
     }
 
     if (str == "true" || str == "false") {
@@ -126,11 +122,7 @@ function guessStringType(str) {
 
 function getValueType(value) {
     if (Number(value) === value) {
-        if (value % 1 === 0) {
-            return "integer"
-        } else {
-            return "float"
-        }
+        return "number"
     }
 
     if (Array.isArray(value)) {
@@ -212,7 +204,7 @@ function findParsingOptimizationAdvices(parent, array) {
                             subEvents[key] = []
                         }
                         subEvents[key].push(JSON.stringify(value))
-                    } else if (valueType == "integer" || valueType == "float") {
+                    } else if (valueType == "number") {
                         if (value < keys[key]["min"]) {
                             keys[key]["min"] = value
                         }
@@ -311,7 +303,7 @@ function findParsingOptimizationAdvices(parent, array) {
 
             str += "<p>Type : <b>" + keys[key]["types"].join(", ") + "</b></p>"
 
-            if (keys[key]["types"].length == 1 && (keys[key]["types"][0] == "integer" || keys[key]["types"][0] == "float")) {
+            if (keys[key]["types"].length == 1 && (keys[key]["types"][0] == "number")) {
                 str += "<p>Characteristics:</p><ul>"
                 str += "<p><b>min</b> : " + keys[key]["min"] + "</p>"
                 str += "<p><b>max</b> : " + keys[key]["max"] + "</p>"
