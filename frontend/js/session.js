@@ -23,6 +23,8 @@ function saveSession() {
         text_wrapping: ($('#css_theme_text_wrapping').attr('href').indexOf('no-text-wrapping.css') != -1 ? false : true),
         enable_parsing_advices: enableParsingAdvices,
         logstash_version: $('#logstash_version :selected').text(),
+        input_editor_height: $('#' + inputEditor.container.id).css('height'),
+        editor_height: $('#' + editor.container.id).css('height'),
         config: {
             input_data: inputEditor.getSession().getValue(),
             logstash_filter: editor.getSession().getValue(),
@@ -104,6 +106,14 @@ function loadSession(session) {
             disableParsingAdvicesMode()
         }
 
+        if ("input_editor_height" in session) {
+            resizeEditor(inputEditor, session.input_editor_height)
+        }
+
+        if ("editor_height" in session) {
+            resizeEditor(editor, session.editor_height)
+        }
+
         $("#logstash_version option").filter(function() {
             return $(this).text().trim() == session.logstash_version;
         }).prop('selected', true);
@@ -134,6 +144,8 @@ function loadUserConfig(e) {
         try {
             config = JSON.parse(configString)
             loadConfig(config)
+            resizeEditorForContent(inputEditor, 20)
+            resizeEditorForContent(editor, 40)
             toastr.success('Successfully loaded your saved config', 'Success')
         } catch (e) {
             toastr.error('Your config backup should be a JSON file, is that the right file ?', 'Error')

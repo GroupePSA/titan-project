@@ -2,3 +2,10 @@
     font-family: monospace !important;
     font-size: 14px !important;
 }
+
+.app_editor_dragbar {
+  width: 100%;
+  height: 2px;
+  cursor: row-resize;
+  opacity: 1;
+}

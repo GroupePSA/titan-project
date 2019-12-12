@@ -229,9 +229,10 @@
               logs</strong> of your formats. You should not have more than about 100 lines of logs.
           </p>
 
-          <div class="col-lg-12" style="margin-top: 1em">
+          <div class="col-lg-12 app_editor_wrapper" id="input_data_textarea_wrapper" style="margin-top: 1em">
             <pre id="input_data_textarea" style="position: relative; height: 20em; " class="col-lg-12" rows="10"
               placeholder="Copy/Paste your logs file here !"></pre>
+              <div id="input_data_textarea_dragbar" class="app_editor_dragbar"></div>
           </div>
 
           <div>
@@ -241,9 +242,10 @@
             </p>
           </div>
 
-          <div class="col-lg-12" style="margin-top: 2em">
-            <pre id="logstash_filter_textarea" style="position: relative; height: 40em; " class="col-lg-12" rows="15"
+          <div class="col-lg-12 app_editor_wrapper" style="margin-top: 2em" id="logstash_filter_textarea_wrapper">
+            <pre id="logstash_filter_textarea" style="position: relative; height: 40em;" class="col-lg-12" rows="15"
               placeholder="Write your logstash filter here !"></pre>
+              <div id="logstash_filter_textarea_dragbar" class="app_editor_dragbar"></div>
           </div>
 
           <div class="col-lg-12 row text-center" style="margin-top: 2em">

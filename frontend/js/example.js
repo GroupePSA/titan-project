@@ -68,6 +68,7 @@ function exampleFactory(conf) {
             url: conf.input_data_filepath,
             success: function (data) {
                 inputEditor.getSession().setValue(data, -1)
+                resizeEditorForContent(inputEditor)
             }
         });
     }
@@ -77,6 +78,7 @@ function exampleFactory(conf) {
             url: conf.filter_filepath,
             success: function (data) {
                 editor.getSession().setValue(data, -1);
+                resizeEditorForContent(editor)
             }
         });
     }

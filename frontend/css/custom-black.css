@@ -50,3 +50,11 @@
   background-color: #00bc8c;
   color: black;
 }
+
+.app_editor_dragbar {
+  background-color: #324837;
+}
+
+.app_editor_wrapper {
+	border: 0px solid #324837;
+}

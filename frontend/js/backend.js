@@ -510,6 +510,8 @@ $('#clear_form').click(function () {
     applyFieldsAttributes()
     disableMultilineCodec()
     fileUploadDisabled()
+    resizeEditor(inputEditor, "20em")
+    resizeEditor(editor, "40em")
     saveSession();
     toastr.success("Successfully cleaned your workspace", "Success")
 });

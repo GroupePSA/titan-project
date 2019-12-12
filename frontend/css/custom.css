@@ -66,3 +66,11 @@
 .mark-success {
   background-color: #18BC9C;
 }
+
+.app_editor_dragbar {
+  background-color: #cacaca;
+}
+
+.app_editor_wrapper {
+	border: 0px solid #cacaca;
+}
