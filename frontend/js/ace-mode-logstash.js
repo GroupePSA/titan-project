@@ -93,6 +93,9 @@ ace.define("ace/mode/logstash_highlight_rules", ["require", "exports", "module",
                             token: ["string", "keyword.type", "string", "constant.language.boolean", "string"],
                             regex: "(%{)([a-zA-Z0-9_]+)(:)([@a-zA-Z0-9_]+)(})"
                         },{
+                            token: ["string", "keyword.type", "string", "constant.language.boolean", "string"],
+                            regex: "(%{)([a-zA-Z0-9_]+)(:)((?:\[[@a-zA-Z0-9_]+\])+)(})"
+                        },{
                             token: ["string", "keyword.type", "string"],
                             regex: "(%{)([A-Z0-9_]+)(})"
                         },{
