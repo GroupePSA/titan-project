@@ -7,6 +7,7 @@ function fileUploadDisabled() {
     $('#upload_logfile').val("")
     $('#upload_logfile').show()
     $('#upload_logfile_cancel').hide()
+    remote_file_hash = undefined
     inputEditor.setReadOnly(false)
     saveSession()
 }
@@ -21,6 +22,7 @@ function fileUploadDisabledClean() {
 function fileUploadEnabled(hash, content) {
     $('#upload_logfile').hide()
     $('#upload_logfile_cancel').show()
+    remote_file_hash = hash
     inputEditor.setReadOnly(true)
 
     if (content != undefined) {
