@@ -56,12 +56,18 @@ $('#change_theme').click(function () {
 function enableMinimalistMode() {
   $('#css_theme_minimalist').attr('href', './css/custom-minimalist.css');
 
+  $('#custom_logstash_patterns_root_container').removeClass("card")
+  $('#custom_logstash_patterns_container').removeClass("card-header")
+
   console.debug("Enable minimalist mode")
 }
 
 // Disable the minimalist mode
 function disableMinimalistMode() {
   $('#css_theme_minimalist').attr('href', './css/custom-nominimalist.css');
+
+  $('#custom_logstash_patterns_root_container').addClass("card")
+  $('#custom_logstash_patterns_container').addClass("card-header")
 
   console.debug("Disable minimalist mode")
 }
