@@ -270,7 +270,7 @@ function buildHumanSummary(config) {
         summary += "\n> No data provided\n"
     } else {
         summary += "\n```\n"
-        summary += config.input_data
+        summary += config.input_data.split('\n').slice(0, 10).join("\n")
         summary += "\n```\n"
     }
     if(config.custom_codec.trim().length != 0) {
