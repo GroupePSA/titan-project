@@ -6,12 +6,21 @@ var exec = require('child_process').exec;
 const execSync = require('child_process').execSync;
 const fs = require('fs-extra')
 var uniqid = require('uniqid');
-const logger = require('../utils/logger').logger;
+var LRU = require("lru-cache")
+var sizeof = require('object-sizeof')
 
+const logger = require('../utils/logger').logger;
 var system = require("../utils/system")
 const constants = require("../utils/constants")
 
 var OUTPUT_FILTER = "output { stdout { codec => json_lines } }";
+
+var cache = new LRU({
+    max: constants.CACHE_NUMBER_RESULT,
+    maxAge: constants.CACHE_TTL_MS,
+    stale: true,
+    updateAgeOnGet: true
+})
 
 // Sort version in 'real' order
 // For example, 5.6.4 is before 5.6.16
@@ -85,6 +94,16 @@ router.get('/versions', function (req, res) {
     res.send(JSON.stringify({ "versions": logstash_versions, "succeed": true }));
 })
 
+// Cache result into cache if possible / needed
+
+function cacheResult(requestHash, result) {
+    if(constants.CACHE_NUMBER_RESULT != 0) {
+        if (sizeof(result) < constants.CACHE_MAX_OBJECT_SIZE_B) {
+            cache.set(requestHash, result)
+        }
+    }
+}
+
 // Rooting for process starting
 
 router.post('/start', function (req, res) {
@@ -104,45 +123,56 @@ router.post('/start', function (req, res) {
 
     if (argumentsValids(log, id, req, res)) {
 
-        var input = {
-            type: (req.body.input_data != null ? "input" : "file")
-        }
+        var useCache = req.body == undefined || !req.body.no_cache
+        delete req.body.no_cache
 
-        var instanceDirectory = constants.LOGSTASH_DATA_DIR + id + "/"
+        var requestHash = system.createHash(req.body)
+        var result = cache.get(requestHash)
 
-        fs.ensureDirSync(instanceDirectory)
-
-        if (input.type == "input") {
-            input.tmp_filepath = instanceDirectory + "data.log"
-            var input_data = req.body.input_data
-            if(!input_data.endsWith("\n")) {
-                input_data = input_data + "\n"
-            }
-            system.writeStringToFile(log, input.tmp_filepath, input_data, function () { });
+        if(result != undefined && useCache) {
+            res.setHeader('Content-Type', 'application/json');
+            res.send(result);
         } else {
-            input.filehash = req.body.filehash;
+            var input = {
+                type: (req.body.input_data != null ? "input" : "file")
+            }
+    
+            var instanceDirectory = constants.LOGSTASH_DATA_DIR + id + "/"
+    
+            fs.ensureDirSync(instanceDirectory)
+    
+            if (input.type == "input") {
+                input.tmp_filepath = instanceDirectory + "data.log"
+                var input_data = req.body.input_data
+                if(!input_data.endsWith("\n")) {
+                    input_data = input_data + "\n"
+                }
+                system.writeStringToFile(log, input.tmp_filepath, input_data, function () { });
+            } else {
+                input.filehash = req.body.filehash;
+            }
+    
+            var logstash_input = buildLogstashInput(req.body.input_extra_fields, req.body['custom_codec'])
+            var logstash_filter = req.body.logstash_filter;
+            var logstash_version = req.body.logstash_version
+    
+            if (req.body['custom_logstash_patterns'] != undefined) {
+                var custom_logstash_patterns = req.body.custom_logstash_patterns;
+                var pattern_directory = instanceDirectory + "patterns/";
+                fs.ensureDirSync(pattern_directory)
+                system.writeStringToFile(log, pattern_directory + "custom_patterns", custom_logstash_patterns, function () { });
+                logstash_filter = removeProblematicParametersFilter(logstash_filter)
+                logstash_filter = logstash_filter.replace(/grok\s*{/gi, ' grok { patterns_dir => ["/app/patterns"] ')
+            }
+    
+            var logstash_conf = logstash_input + "\n" + logstash_filter + "\n" + OUTPUT_FILTER;
+    
+            var logstash_conf_filepath = instanceDirectory + "logstash.conf"
+    
+            system.writeStringToFile(log, logstash_conf_filepath, logstash_conf, function () {
+                computeResult(log, id, res, input, instanceDirectory, logstash_version, requestHash);
+            })
         }
-
-        var logstash_input = buildLogstashInput(req.body.input_extra_fields, req.body['custom_codec'])
-        var logstash_filter = req.body.logstash_filter;
-        var logstash_version = req.body.logstash_version
-
-        if (req.body['custom_logstash_patterns'] != undefined) {
-            var custom_logstash_patterns = req.body.custom_logstash_patterns;
-            var pattern_directory = instanceDirectory + "patterns/";
-            fs.ensureDirSync(pattern_directory)
-            system.writeStringToFile(log, pattern_directory + "custom_patterns", custom_logstash_patterns, function () { });
-            logstash_filter = removeProblematicParametersFilter(logstash_filter)
-            logstash_filter = logstash_filter.replace(/grok\s*{/gi, ' grok { patterns_dir => ["/app/patterns"] ')
-        }
-
-        var logstash_conf = logstash_input + "\n" + logstash_filter + "\n" + OUTPUT_FILTER;
-
-        var logstash_conf_filepath = instanceDirectory + "logstash.conf"
-
-        system.writeStringToFile(log, logstash_conf_filepath, logstash_conf, function () {
-            computeResult(log, id, res, input, instanceDirectory, logstash_version);
-        })
 
     }
 })
@@ -154,7 +184,7 @@ router.post('/start', function (req, res) {
 
 // Compute the logstash result
 
-function computeResult(log, id, res, input, instanceDirectory, logstash_version) {
+function computeResult(log, id, res, input, instanceDirectory, logstash_version, requestHash) {
     log.info({
         "action": "start_process"
     }, id + " - Starting logstash process");
@@ -218,7 +248,9 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version)
             })
 
             res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify({ "config_ok": true, "job_result": job_result, "succeed": true }));
+            var result = JSON.stringify({ "config_ok": true, "job_result": job_result, "succeed": true })
+            cacheResult(requestHash, result)
+            res.send(result);
         });
     } catch (ex) {
         var job_result = {
@@ -236,13 +268,15 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version)
                 },id + " - Failed to delete instance directory");
             }
         })
-        
+
         res.setHeader('Content-Type', 'application/json');
-        res.send(JSON.stringify({
+        var result = JSON.stringify(JSON.stringify({
             "config_ok": true,
             "job_result": job_result,
             "succeed": false
-        }));
+        }))
+        cacheResult(requestHash, result)
+        res.send(result);
     }
         
           

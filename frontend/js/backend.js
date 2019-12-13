@@ -570,6 +570,10 @@ function manageResultLogstashProcess(code, type, message) {
     return notif
 }
 
+// Store latest run of the Logstash process
+
+var latest_logstash_run = undefined
+
 // The main process, that will send data to backend
 
 $('#start_process').click(function () {
@@ -584,11 +588,17 @@ $('#start_process').click(function () {
 
     if (userInputValid()) {
 
+        var currentTime = Date.now()
+
         var body = {
             logstash_filter: editor.getSession().getValue(),
             input_extra_fields: getFieldsAttributesValues(),
             logstash_version: $('#logstash_version :selected').text()
         };
+
+        if (latest_logstash_run != undefined && (currentTime - latest_logstash_run) < 5000) {
+            body.no_cache = true
+        }
 
         if (remote_file_hash == undefined) {
             body.input_data = inputEditor.getSession().getValue()
@@ -609,6 +619,8 @@ $('#start_process').click(function () {
         $("#latest_run_container").addClass("d-none")
         $("#parsing_advices").addClass("d-none")
         $("#download_output").addClass('disabled');
+
+        latest_logstash_run = Date.now()
 
         $.ajax({
             url: api_url + "/logstash/start",

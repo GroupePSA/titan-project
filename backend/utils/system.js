@@ -1,6 +1,8 @@
 const fs = require('fs-extra')
 const path = require('path')
 
+var forge = require('node-forge');
+
 const logger = require("./logger").logger;
 
 const constants = require("./constants")
@@ -85,6 +87,15 @@ function deleteFilesOlderThan(rootDirectory, duration_ms) {
     });
 }
 
+// Create a hash for an object
+
+function createHash(object) {
+    var raw_obj = JSON.stringify(object)
+    var md = forge.md.sha512.create();
+    md.update(raw_obj);
+    return md.digest().toHex()
+}
+
 // Build the input user filepath
 
 function buildLocalLogFilepath(hash) {
@@ -96,5 +107,6 @@ module.exports = {
     writeStringToFile: writeStringToFile,
     deleteFile: deleteFile,
     deleteFilesOlderThan: deleteFilesOlderThan,
-    buildLocalLogFilepath: buildLocalLogFilepath
+    buildLocalLogFilepath: buildLocalLogFilepath,
+    createHash: createHash
 };
