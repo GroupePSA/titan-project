@@ -43,6 +43,7 @@ function saveSession() {
     if (JSON.stringify(store.get('session')) != JSON.stringify(session)) {
         toastr.warning('There was a problem while saving your work', 'Save problem')
     }
+    //addSessionToHistory(session.config)
 }
 
 // Load a config for user
@@ -365,6 +366,80 @@ function buildHumanSummary(config) {
     summary += summary_append
 
     return summary
+}
+
+// Check if two object content are equals
+function deepEqual(a,b) {
+    return JSON.stringify(a) === JSON.stringify(b);
+}
+
+// Add current session to history
+function addSessionToHistory(session) {
+    var maxSessionsSaved = 10
+    var sessionHistory = store.get("session_history") || []
+
+    for(var i in sessionHistory) {
+        var h = sessionHistory[i]
+        if(deepEqual(h.session, session)) {
+            sessionHistory.splice(i, 1)
+            sessionHistory.unshift({
+                "date": Date.now(),
+                "session": session
+            })
+            setTimeout(function() {
+                console.debug("Writing current session to cache")
+                store.set("session_history", sessionHistory)
+            }, 50); 
+            return
+        }
+    }
+
+    if(sessionHistory.length >= maxSessionsSaved) {
+        sessionHistory.pop()
+    }
+
+    sessionHistory.unshift({
+        "date": Date.now(),
+        "session": session
+    })
+    setTimeout(function() {
+        console.debug("Writing current session to cache")
+        store.set("session_history", sessionHistory)
+    }, 50); }
+
+// Show the session history
+
+function showSessionHistory() {
+    $('#sessionHistoryModal').modal('show');
+    var sessionHistory = store.get("session_history")
+
+    if(sessionHistory == undefined) {
+        $('#sessionHistoryContent').html("No history found.")
+        return
+    }
+
+    var content = '<div class="list-group list-group-flush">'
+    for(var i in sessionHistory) {
+        var h = sessionHistory[i]
+        var date = new Date(h['date'])
+        var humanDate = date.toLocaleDateString() + " " + date.toLocaleTimeString()
+        content += '<a href="#" class="list-group-item list-group-item-action" onclick="loadSessionHistory(' + i + ')">' + humanDate + '</a>'
+    }
+    content += "</div>"
+    $('#sessionHistoryContent').html(content)
+}
+
+// Load a session history 
+
+function loadSessionHistory(i) {
+    var sessionHistory = store.get("session_history") || []
+    if(sessionHistory.length < i) {
+        toastr.error("Failed to load your session history", "Failure")
+        return
+    }
+    loadConfig(sessionHistory[i].session)
+    $('#sessionHistoryModal').modal('hide');
+    toastr.success("Successfully loaded your session", "Success")
 }
 
 // A Trigger to copy the share link text when user click on the button
