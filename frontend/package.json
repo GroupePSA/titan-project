@@ -58,6 +58,11 @@
         "version": "1.9.1",
         "src": "dist/*",
         "target": "static/showdown"
+      },
+      "dexie": {
+        "version": "2.0.4",
+        "src": "dist/*",
+        "target": "static/dexie"
       }
     }
   }
