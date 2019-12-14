@@ -588,7 +588,7 @@ $('#start_process').click(function () {
 
     if (userInputValid()) {
 
-        var currentTime = Date.now()
+        var refreshTimeCacheInvalidation = 5000
 
         var body = {
             logstash_filter: editor.getSession().getValue(),
@@ -596,7 +596,7 @@ $('#start_process').click(function () {
             logstash_version: $('#logstash_version :selected').text()
         };
 
-        if (latest_logstash_run != undefined && (currentTime - latest_logstash_run) < 5000) {
+        if (latest_logstash_run != undefined && (Date.now() - latest_logstash_run) < refreshTimeCacheInvalidation) {
             body.no_cache = true
         }
 
@@ -630,6 +630,23 @@ $('#start_process').click(function () {
             dataType: "json",
             timeout: 60000,
             success: function (data) {
+
+                if(data.cached) {
+                    $("#start_process").removeClass("btn-primary")
+                    $("#start_process").addClass("btn-info")
+                    $("#start_process").text("Refresh results")
+
+                    var timeToDisplayChanges = refreshTimeCacheInvalidation - (Date.now() - latest_logstash_run)
+                    if(timeToDisplayChanges < 0) {
+                        timeToDisplayChanges = 0
+                    }
+                    setTimeout(function() {
+                        $("#start_process").addClass("btn-primary")
+                        $("#start_process").removeClass("btn-info")
+                        $("#start_process").text("Start process")
+                    }, timeToDisplayChanges)
+                }
+
                 logstash_output = cleanLogstashStdout(data.job_result.stdout)
                 logstash_output_stderr = cleanLogstashStderr(data.job_result.stderr)
 
