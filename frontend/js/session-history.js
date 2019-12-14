@@ -51,10 +51,8 @@ function addSessionToHistory(session) {
                     "date": Date.now(),
                     "session": session
                 })
-                setTimeout(function() {
-                    console.debug("Writing current session to cache")
-                    saveSessionHistory(sessionHistory)
-                }, 50); 
+                console.debug("Writing current session to cache")
+                saveSessionHistory(sessionHistory)
                 return
             }
         }
