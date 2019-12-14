@@ -21,6 +21,19 @@ var whatsup = [
         news: [
             "We can now export to Human mode summary of current configuration"
         ]
+    },
+    {
+        version: 4,
+        date: "14 december 2019",
+        news: [
+            "Editors heighs are resizable",
+            "Added an option to enable lines-wrapping for editors",
+            "Backend cache Logstash job results",
+            "10's last sessions are now saved, and accessible through history!",
+            "Augment number of lines shown on file upload",
+            "Some ace coloration corrections & improvements for Logstash language",
+            "New rules & rules correction for parsing advices"
+        ]
     }
 ]
 
