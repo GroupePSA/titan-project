@@ -3,7 +3,6 @@ var crypto = require('crypto')
 var expect = require("chai").expect;
 var chai = require("chai");
 var chaiHttp = require("chai-http");
-var moment = require('moment')
 
 var app = require("../../app")
 
@@ -27,7 +26,6 @@ describe("Logstash testing", function () {
       logstash_version: config.logstashVersion
     }
 
-    var t1 = moment()
     chai.request(app)
       .post('/logstash/start')
       .send(formData)
@@ -35,11 +33,7 @@ describe("Logstash testing", function () {
         expect(res).to.have.status(200);
         expect(res.body.config_ok).to.equal(true);
         expect(res.body.succeed).to.equal(true);
-
-        var t2 = moment()
-        var timeDifference = t2.diff(t1, 'seconds')
-
-        expect(timeDifference > 3).to.be.true // Should be slow
+        expect(res.body.cached).to.equal(false);
 
         chai.request(app)
           .post('/logstash/start')
@@ -48,11 +42,7 @@ describe("Logstash testing", function () {
             expect(res).to.have.status(200);
             expect(res.body.config_ok).to.equal(true);
             expect(res.body.succeed).to.equal(true);
-
-            var t3 = moment()
-            var timeDifference = t3.diff(t2, 'seconds')
-
-            expect(timeDifference > 3).to.be.true // Should be slow
+            expect(res.body.cached).to.equal(false);
 
             done();
           });

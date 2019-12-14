@@ -1,7 +1,6 @@
 var expect = require("chai").expect;
 var chai = require("chai");
 var chaiHttp = require("chai-http");
-var moment = require('moment')
 
 var app = require("../../app")
 
@@ -25,7 +24,6 @@ describe("Logstash testing", function () {
       logstash_version: config.logstashVersion
     }
 
-    var t1 = moment()
     chai.request(app)
       .post('/logstash/start')
       .send(formData)
@@ -35,11 +33,7 @@ describe("Logstash testing", function () {
         expect(res.body.succeed).to.equal(true);
         expect(res.body.job_result.stdout).to.match(/hi/);
         expect(res.body.job_result.stdout).to.match(/morille/);
-
-        var t2 = moment()
-        var timeDifference = t2.diff(t1, 'seconds')
-
-        expect(timeDifference > 3).to.be.true // Should be slow
+        expect(res.body.cached).to.equal(false);
 
         formData = {
           input_data: "hi\nho\nha\nhou\nlol\nmorille5",
@@ -57,11 +51,7 @@ describe("Logstash testing", function () {
             expect(res.body.succeed).to.equal(true);
             expect(res.body.job_result.stdout).to.match(/hi/);
             expect(res.body.job_result.stdout).to.match(/morille/);
-
-            var t3 = moment()
-            var timeDifference = t3.diff(t2, 'seconds')
-
-            expect(timeDifference > 3).to.be.true // Should be slow
+            expect(res.body.cached).to.equal(false);
 
             done();
           });

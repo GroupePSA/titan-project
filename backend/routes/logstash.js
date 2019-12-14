@@ -8,6 +8,7 @@ const fs = require('fs-extra')
 var uniqid = require('uniqid');
 var LRU = require("lru-cache")
 var sizeof = require('object-sizeof')
+var LZUTF8 = require('lzutf8');
 
 const logger = require('../utils/logger').logger;
 var system = require("../utils/system")
@@ -99,7 +100,8 @@ router.get('/versions', function (req, res) {
 function cacheResult(requestHash, result) {
     if(constants.CACHE_NUMBER_RESULT != 0) {
         if (sizeof(result) < constants.CACHE_MAX_OBJECT_SIZE_B) {
-            cache.set(requestHash, result)
+            var compressedResult = LZUTF8.compress(JSON.stringify(result))
+            cache.set(requestHash, compressedResult)
         }
     }
 }
@@ -130,6 +132,8 @@ router.post('/start', function (req, res) {
         var result = cache.get(requestHash)
 
         if(result != undefined && useCache) {
+            result = JSON.parse(LZUTF8.decompress(result))
+            result['cached'] = true
             res.setHeader('Content-Type', 'application/json');
             res.send(result);
         } else {
@@ -248,8 +252,10 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version,
             })
 
             res.setHeader('Content-Type', 'application/json');
-            var result = JSON.stringify({ "config_ok": true, "job_result": job_result, "succeed": true })
+            var result = { "config_ok": true, "job_result": job_result, "succeed": true }
             cacheResult(requestHash, result)
+            result['cached'] = false
+            result = JSON.stringify(result)
             res.send(result);
         });
     } catch (ex) {
@@ -270,12 +276,10 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version,
         })
 
         res.setHeader('Content-Type', 'application/json');
-        var result = JSON.stringify(JSON.stringify({
-            "config_ok": true,
-            "job_result": job_result,
-            "succeed": false
-        }))
+        var result = {"config_ok": true, "job_result": job_result, "succeed": false}
         cacheResult(requestHash, result)
+        result['cached'] = false
+        result = JSON.stringify(result)
         res.send(result);
     }
         
