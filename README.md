@@ -71,7 +71,6 @@ docker-compose build
 
 # Go into the frontend directory
 npm install
-npm run postinstall
 
 # Go into the backend directory
 cd /vagrant/backend
