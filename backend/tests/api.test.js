@@ -209,6 +209,22 @@ describe("API Testing", function () {
         });
     });
 
+    it("work with a bugged brok pattern", function (done) {
+      formData = {
+        line: 'f',
+        grok_pattern: "%{(GREEDYDATA:syslog_timestamp}"
+      }
+      chai.request(app)
+        .post('/grok_tester')
+        .send(formData)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body.config_ok).to.equal(true);
+          expect(res.body.succeed).to.equal(true);
+          done();
+        });
+    });
+
     it("work with a semi-working grok pattern", function (done) {
       formData = {
         line: 'Dec 23 12:11:43 louis postfix/smtpd[31499]: connect from unknown[95.75.93.154]',

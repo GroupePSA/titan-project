@@ -4,6 +4,7 @@ var router = express.Router();
 const NodeGrok = require("node-grok")
 
 const constants = require("../utils/constants")
+const log = require("../utils/logger").logger
 
 router.post('/', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
@@ -54,7 +55,11 @@ router.post('/', function (req, res) {
         if (results.length != 0 && results[results.length - 1] != null) {
             op_per_seconds = undefined
             if (constants.COMPUTE_GROK_PERFORMANCES == "true") {
-                op_per_seconds = computeGrokPerformance(grok, grok_pattern, line)
+                try {
+                    op_per_seconds = computeGrokPerformance(grok, grok_pattern, line)
+                } catch (error) {
+                    log.warn("Pattern '" + grok_pattern + "' is invalid")
+                }
             }
             res.send(JSON.stringify({ "config_ok": true, "succeed": true, "results": results, "operations_per_second": op_per_seconds }));
         } else {
@@ -93,7 +98,11 @@ function computeGrokPerformance(grok, grok_pattern, line) {
     var start = new Date()
 
     for (var i = 0; i < loopNumber; i++) {
-        var res = pattern.parseSync(line)
+        try {
+            pattern.parseSync(line)
+        } catch (error) {
+            throw error
+        }
     }
 
     var end = new Date() - start
