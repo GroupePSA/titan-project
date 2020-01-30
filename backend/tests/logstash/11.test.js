@@ -17,7 +17,7 @@ describe("Logstash testing", function () {
   this.timeout(config.MAX_TIMEOUT);
 
   it("no cache should occured for very big log file", function (done) {
-   // if (!config.enable_slow_tests) this.skip()
+    if (!config.enable_slow_tests) this.skip()
 
     formData = {
       input_data: crypto.randomBytes(10000000).toString('hex'),
