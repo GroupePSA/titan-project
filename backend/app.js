@@ -5,7 +5,6 @@ const express = require('express')
 var bodyParser = require('body-parser')
 var cors = require('cors')
 const pinoExpress = require("./utils/logger").pinoExpress
-const log = require("./utils/logger").logger
 
 const constants = require("./utils/constants")
 
