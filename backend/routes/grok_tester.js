@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const NodeGrok = require("node-grok")
+const NodeGrok = require("grok-js")
 
 const constants = require("../utils/constants")
 const log = require("../utils/logger").logger
@@ -9,7 +9,7 @@ const log = require("../utils/logger").logger
 router.post('/', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
 
-    if (req.body.line == undefined || req.body.grok_pattern == undefined) {
+    if (!req.body.line || !req.body.grok_pattern) {
         res.status(400);
         res.send(JSON.stringify({ "config_ok": false, "succeed": false }));
     } else {

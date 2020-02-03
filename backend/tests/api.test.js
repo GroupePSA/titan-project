@@ -178,7 +178,7 @@ describe("API Testing", function () {
     it("work with a working grok pattern", function (done) {
       formData = {
         line: 'Dec 23 12:11:43 louis postfix/smtpd[31499]: connect from unknown[95.75.93.154]',
-        grok_pattern: "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}"
+        grok_pattern: "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\\\[%{POSINT:syslog_pid}\\\])?: %{GREEDYDATA:syslog_message}"
       }
 
       chai.request(app)
@@ -188,6 +188,45 @@ describe("API Testing", function () {
           expect(res).to.have.status(200);
           expect(res.body.config_ok).to.equal(true);
           expect(res.body.succeed).to.equal(true);
+
+          expect(res.body.results).to.exist
+          expect(res.body.results).to.have.lengthOf(10)
+          expect(res.body.results[9].result).to.deep.equal({
+            syslog_timestamp: 'Dec 23 12:11:43',
+            syslog_hostname: 'louis',
+            syslog_program: 'postfix/smtpd',
+            syslog_pid: '31499',
+            syslog_message: 'connect from unknown[95.75.93.154]'
+          })
+         
+          done();
+        });
+    });
+
+    it("work with a working grok pattern with capture group", function (done) {
+      formData = {
+        line: 'Dec 23 12:11:43 louis postfix/smtpd[31499]: connect from unknown[95.75.93.154]',
+        grok_pattern: "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\\\[%{POSINT:syslog_pid}\\\])?: (?<syslog_message>.*)"
+      }
+
+      chai.request(app)
+        .post('/grok_tester')
+        .send(formData)
+        .end((err, res) => {
+          expect(res).to.have.status(200);
+          expect(res.body.config_ok).to.equal(true);
+          expect(res.body.succeed).to.equal(true);
+
+          expect(res.body.results).to.exist
+          expect(res.body.results).to.have.lengthOf(10)
+          expect(res.body.results[9].result).to.deep.equal({
+            syslog_timestamp: 'Dec 23 12:11:43',
+            syslog_hostname: 'louis',
+            syslog_program: 'postfix/smtpd',
+            syslog_pid: '31499',
+            syslog_message: 'connect from unknown[95.75.93.154]'
+          })
+          
           done();
         });
     });
@@ -195,7 +234,7 @@ describe("API Testing", function () {
     it("work with a working grok pattern", function (done) {
       formData = {
         line: 'Dec 23 12:11:43 louis postfix/smtpd[31499]: connect from unknown[95.75.93.154]',
-        grok_pattern: "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATATEST:syslog_message}",
+        grok_pattern: "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\\[%{POSINT:syslog_pid}\\])?: %{GREEDYDATATEST:syslog_message}",
         extra_patterns: "GREEDYDATATEST .*"
       }
       chai.request(app)
@@ -205,6 +244,17 @@ describe("API Testing", function () {
           expect(res).to.have.status(200);
           expect(res.body.config_ok).to.equal(true);
           expect(res.body.succeed).to.equal(true);
+
+          expect(res.body.results).to.exist
+          expect(res.body.results).to.have.lengthOf(10)
+          expect(res.body.results[9].result).to.deep.equal({
+            syslog_timestamp: 'Dec 23 12:11:43',
+            syslog_hostname: 'louis',
+            syslog_program: 'postfix/smtpd',
+            syslog_pid: '31499',
+            syslog_message: 'connect from unknown[95.75.93.154]'
+          })
+
           done();
         });
     });
@@ -221,6 +271,10 @@ describe("API Testing", function () {
           expect(res).to.have.status(200);
           expect(res.body.config_ok).to.equal(true);
           expect(res.body.succeed).to.equal(true);
+
+          expect(res.body.results).to.exist
+          expect(res.body.results).to.have.lengthOf(31)
+
           done();
         });
     });
@@ -237,6 +291,16 @@ describe("API Testing", function () {
           expect(res).to.have.status(200);
           expect(res.body.config_ok).to.equal(true);
           expect(res.body.succeed).to.equal(true);
+
+          expect(res.body.results).to.exist
+          expect(res.body.results).to.have.lengthOf(10)
+          expect(res.body.results[9].result).to.equal(null)
+
+          expect(res.body.results[3].result).to.deep.equal({
+            syslog_timestamp: 'Dec 23 12:11:43',
+            syslog_hostname: 'louis'
+          })
+
           done();
         });
     });
@@ -253,6 +317,11 @@ describe("API Testing", function () {
           expect(res).to.have.status(200);
           expect(res.body.config_ok).to.equal(true);
           expect(res.body.succeed).to.equal(true);
+
+          expect(res.body.results).to.exist
+          expect(res.body.results).to.have.lengthOf(7)
+          expect(res.body.results[6].result).to.equal(null)
+
           done();
         });
     });
@@ -266,9 +335,12 @@ describe("API Testing", function () {
         .post('/grok_tester')
         .send(formData)
         .end((err, res) => {
-          expect(res).to.have.status(200);
-          expect(res.body.config_ok).to.equal(true);
+          expect(res).to.have.status(400);
+          expect(res.body.config_ok).to.equal(false);
           expect(res.body.succeed).to.equal(false);
+
+          expect(res.body.results).not.to.exist
+
           done();
         });
     });
@@ -283,6 +355,9 @@ describe("API Testing", function () {
           expect(res).to.have.status(400);
           expect(res.body.config_ok).to.equal(false);
           expect(res.body.succeed).to.equal(false);
+
+          expect(res.body.results).not.to.exist
+
           done();
         });
     });
