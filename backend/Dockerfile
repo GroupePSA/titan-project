@@ -6,7 +6,7 @@ FROM ubuntu:bionic
 # Install Nodejs 10
 RUN apt-get update \
     && apt-get install -y curl dirmngr apt-transport-https lsb-release ca-certificates \
-    && curl -sL https://deb.nodesource.com/setup_10.x | bash \
+    && curl -sL https://deb.nodesource.com/setup_12.x | bash \
     && apt-get update \
     && apt-get -y install gcc g++ make \
     && apt-get install -y nodejs
