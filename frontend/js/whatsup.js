@@ -40,7 +40,8 @@ var whatsup = [
         date: "4 february 2020",
         news: [
             "Grok parse failure are easier to track -> check the line in the tags!",
-            "@metadata is now displayed, if present (and non-empty)"
+            "@metadata is now displayed, if present (and non-empty)",
+            "Data explorer allow easily to set-up a filter in the output"
         ]
     }
 ]
