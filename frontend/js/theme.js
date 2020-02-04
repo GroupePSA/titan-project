@@ -177,6 +177,37 @@ $('#change_editor_wrapping').click(function () {
   }
 });
 
+// Debug mode
+
+var enableDebug = true
+
+// Enable the debug mode
+function enableDebugMode() {
+  enableDebug = true
+
+  console.debug("Enabled parsing advices mode")
+}
+
+// Disable the debug mode
+function disableDebugMode() {
+  enableDebug = false
+
+  console.debug("Disabled parsing advices mode")
+}
+
+// Change text wrapping mode button trigger
+$('#change_debug_mode').click(function () {
+  if (!enableDebug) {
+    enableDebugMode()
+    saveSession()
+    toastr.success("Enabled debug mode", "Success")
+  } else {
+    disableDebugMode()
+    saveSession()
+    toastr.success("Disabled debug mode", "Success")
+  }
+});
+
 // Parsing advices mode
 
 var enableParsingAdvices = true

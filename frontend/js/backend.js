@@ -593,7 +593,8 @@ $('#start_process').click(function () {
         var body = {
             logstash_filter: editor.getSession().getValue(),
             input_extra_fields: getFieldsAttributesValues(),
-            logstash_version: $('#logstash_version :selected').text()
+            logstash_version: $('#logstash_version :selected').text(),
+            trace: enableDebug
         };
 
         if (latest_logstash_run != undefined && (Date.now() - latest_logstash_run) < refreshTimeCacheInvalidation) {

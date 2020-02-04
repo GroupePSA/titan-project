@@ -23,6 +23,7 @@ function saveSession() {
         text_wrapping: ($('#css_theme_text_wrapping').attr('href').indexOf('no-text-wrapping.css') != -1 ? false : true),
         editor_wrapping: editor.getSession().getUseWrapMode(),
         enable_parsing_advices: enableParsingAdvices,
+        enable_debug_mode: enableDebug,
         logstash_version: $('#logstash_version :selected').text(),
         input_editor_height: $('#' + inputEditor.container.id).css('height'),
         editor_height: $('#' + editor.container.id).css('height'),
@@ -111,6 +112,11 @@ function loadSession(session) {
             enableParsingAdvicesMode()
         } else {
             disableParsingAdvicesMode()
+        }
+        if(session.enable_debug_mode) {
+            enableDebugMode()
+        } else {
+            disableDebugMode()
         }
 
         if ("input_editor_height" in session) {
