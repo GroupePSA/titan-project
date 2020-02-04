@@ -14,7 +14,7 @@ describe("Logstash testing", function () {
   this.slow(100)
   this.timeout(config.MAX_TIMEOUT);
 
-  it("should work with trace off but grok parse failure", function (done) {
+  it("should work with trace off but with grokparsefailure", function (done) {
     if (!config.enable_slow_tests) this.skip()
 
     formData = {

@@ -310,6 +310,8 @@ function removeProblematicParametersFilter(filter) {
 // Add metadata to being to trace potentials problems
 function addFilterTrace(filter) {
 
+    // We add line number for grokparsefailures
+
     if (filter.includes("tag_on_failure")) {
         return filter
     } else {
@@ -322,6 +324,22 @@ function addFilterTrace(filter) {
             return match + ' tag_on_failure => ["_grokparsefailure", "failure line ' + currentLine + '"]'
         })
     }
+
+    // We display metadata if any
+
+    filter += "\n" + `filter {
+
+        ruby {
+            code => "
+                metadata = event.get('@metadata')
+                unless metadata.nil? || metadata.length == 0
+                  event.set('@_metadata', Marshal.load(Marshal.dump(metadata)))
+                end
+     
+            "
+        }
+        
+    }` + "\n"
 
     return filter
 }
