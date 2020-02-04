@@ -18,6 +18,7 @@ function jsonSyntaxHighlight(json) {
     if (typeof json != 'string') {
         json = JSON.stringify(json, undefined, 2);
     }
+    json = json.replace(/@_metadata/g, "@metadata")
     json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
         var cls = 'number';
@@ -164,7 +165,7 @@ function findParsingOptimizationAdvices(parent, array) {
     var fieldConversionBlacklist = ["port"]
 
     if (isRootEventLevel) {
-        fieldsToSkip = ["@timestamp", "@version", "host", "message"]
+        fieldsToSkip = ["@_metadata", "@timestamp", "@version", "host", "message"]
     }
 
     for (var i = 0; i < array.length; i++) {
@@ -232,8 +233,10 @@ function findParsingOptimizationAdvices(parent, array) {
     }
 
     for(key in subEvents) {
-        var fullKey = (isRootEventLevel ? "" : parent + ".") + key
-        findParsingOptimizationAdvices(fullKey, subEvents[key])
+        if (key != "@_metadata") {
+            var fullKey = (isRootEventLevel ? "" : parent + ".") + key
+            findParsingOptimizationAdvices(fullKey, subEvents[key])
+        }
     }
 
     var badFieldNames = []
