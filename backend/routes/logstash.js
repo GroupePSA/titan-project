@@ -13,6 +13,7 @@ var LZUTF8 = require('lzutf8');
 const logger = require('../utils/logger').logger;
 var system = require("../utils/system")
 const constants = require("../utils/constants")
+var string = require("../utils/string")
 
 var OUTPUT_FILTER = "output { stdout { codec => json_lines } }";
 
@@ -125,8 +126,10 @@ router.post('/start', function (req, res) {
 
     if (argumentsValids(log, id, req, res)) {
 
-        var useCache = req.body == undefined || !req.body.no_cache
+        var useCache = req.body.no_cache == undefined || !req.body.no_cache
         delete req.body.no_cache
+
+        var trace = req.body.trace == undefined || req.body.trace
 
         var requestHash = system.createHash(req.body)
         var result = cache.get(requestHash)
@@ -167,6 +170,10 @@ router.post('/start', function (req, res) {
                 system.writeStringToFile(log, pattern_directory + "custom_patterns", custom_logstash_patterns, function () { });
                 logstash_filter = removeProblematicParametersFilter(logstash_filter)
                 logstash_filter = logstash_filter.replace(/grok\s*{/gi, ' grok { patterns_dir => ["/app/patterns"] ')
+            }
+
+            if(trace) {
+                logstash_filter = addFilterTrace(logstash_filter) 
             }
     
             var logstash_conf = logstash_input + "\n" + logstash_filter + "\n" + OUTPUT_FILTER;
@@ -286,7 +293,6 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version,
           
 }
 
-
 // Remove the problematic parameters (Grok only for now)
 function removeProblematicParametersFilter(filter) {
     var rawFilter = filter.split('\n')
@@ -299,6 +305,25 @@ function removeProblematicParametersFilter(filter) {
     });
 
     return filterFormatted
+}
+
+// Add metadata to being to trace potentials problems
+function addFilterTrace(filter) {
+
+    if (filter.includes("tag_on_failure")) {
+        return filter
+    } else {
+        var re = /grok\s*{/g
+
+        filter = filter.replace(re, function(match, index) {
+            var sub = filter.substring(0, index) + match
+            var currentLine = string.numberOfLinesString(sub)
+
+            return match + ' tag_on_failure => ["_grokparsefailure", "failure line ' + currentLine + '"]'
+        })
+    }
+
+    return filter
 }
 
 // Fail because of bad parameters

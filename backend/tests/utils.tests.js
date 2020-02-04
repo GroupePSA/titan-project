@@ -3,6 +3,7 @@ const fs = require('fs-extra')
 
 const constants = require("../utils/constants")
 var system = require("../utils/system")
+var string = require("../utils/string")
 const logger = require("../utils/logger").logger;
 
 describe("Utils testing", function () {
@@ -57,6 +58,16 @@ describe("Utils testing", function () {
                 }, 5);
             })
         });
+
+    });
+
+    describe("string.js", function () {
+
+        it("compute length of a string", function (done) {
+                var str = "abc\bdef\nghi"
+                expect(string.numberOfLinesString(str)).not.to.equal(3)
+                done()
+        })
 
     });
 
