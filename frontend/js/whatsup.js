@@ -34,6 +34,14 @@ var whatsup = [
             "Some ace coloration corrections & improvements for Logstash language",
             "New rules & rules correction for parsing advices"
         ]
+    },
+    {
+        version: 5,
+        date: "4 february 2020",
+        news: [
+            "Grok parse failure are easier to track -> check the line in the tags!",
+            "@metadata is now displayed, if present (and non-empty)"
+        ]
     }
 ]
 
