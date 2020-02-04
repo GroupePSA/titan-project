@@ -39,6 +39,12 @@ function jsonSyntaxHighlight(json) {
     });
 }
 
+// Close the data explorer tab
+
+function closeDataExplorer() {
+    $("#data_explorer").removeClass("show");
+}
+
 // We clean useless lines at start of the Logstash stdout
 
 function cleanLogstashStdout(stdout) {
@@ -280,7 +286,7 @@ function findParsingOptimizationAdvices(parent, array) {
     for (key in badFieldNames) {
         fieldname = (isRootEventLevel ? "" : parent + ".") + badFieldNames[key]
         advicesShouldBeShown = true
-        str = '<li>Fieldname <a href="#output" onclick="applyFilterFieldname(\'' + badFieldNames[key] + '\')">' + fieldname + "</a>"
+        str = '<li>Fieldname <a href="#output" onclick="applyFilterFieldname(\'' + escapeHtml(badFieldNames[key]) + '\')">' + escapeHtml(fieldname) + "</a>"
         str += " should contains only characters in range A-Z, a-z, 0-9, or _</li>"
         $("#parsing_advices").append(str);
     }
@@ -297,7 +303,7 @@ function findParsingOptimizationAdvices(parent, array) {
         
         for(key in keys) {
             str = '<div class="col-lg-3">'
-            str += "<h5 class='text-center text-info' style='margin-bottom: 2em; margin-top: 2em'>" + key + "</h5>"
+            str += "<h5 class='text-center text-info' style='margin-bottom: 2em; margin-top: 2em'><a style='color: inherit;' href='#output' " + 'onclick="closeDataExplorer(); applyFilterFieldname(\'' + key + '\')"> ' + key + "</a></h5>"
             var color = "found-some"
             if (keys[key]["occurence"] == realEventNumber) {
                 color = "found-ok"
@@ -327,7 +333,7 @@ function findParsingOptimizationAdvices(parent, array) {
                 if (values.length == 1) {
                     other_classes = " background-emphasis"
                 }
-                str += "<li class='list-group-item" + other_classes + "'>" + valueToDisplay + " (" + parseFloat(values[i][1]/realEventNumber*100).toFixed(2) + "%)</li>"
+                str += "<li class='list-group-item" + other_classes + "'><a style='color: inherit;' href='#output' " + 'onclick="closeDataExplorer(); applyFilter(\'' + escapeHtml(values[i][0]) + '\', false)"> ' + escapeHtml(valueToDisplay) + "</a>(" + parseFloat(values[i][1]/realEventNumber*100).toFixed(2) + "%)</li>"
             } 
             str +="</ul>"
 
@@ -542,7 +548,7 @@ function applyFilter(filter, reverse) {
 // to match the json format
 
 function applyFilterFieldname(filter) {
-    applyFilter('"' + filter + '"')
+    applyFilter('"' + filter + '"', false)
 }
 
 // Manage result of Logstash process
