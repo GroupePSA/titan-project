@@ -160,6 +160,8 @@ function findParsingOptimizationAdvices(parent, array) {
         $("#parsing_advices").empty()
         $("#parsing_advices").append("<h5>Parsing advices:</h5>")
         $("#parsing_advices").append("<ul>")
+        $("#data_explorer_container").removeClass("d-none")
+        $("#data_explorer").empty()
     }
 
     var keys = {}
@@ -293,54 +295,53 @@ function findParsingOptimizationAdvices(parent, array) {
 
     if (isRootEventLevel) {
         $("#parsing_advices").append("</ul>")
-        
-        $("#data_explorer_container").removeClass("d-none")
-        $("#data_explorer").empty()
 
         // To to cleaner : consider those fields as exported
         fields_characteristics = keys
         totalRealEventNumber = realEventNumber
-        
-        for(key in keys) {
-            str = '<div class="col-lg-3">'
-            str += "<h5 class='text-center text-info' style='margin-bottom: 2em; margin-top: 2em'><a style='color: inherit;' href='#output' " + 'onclick="closeDataExplorer(); applyFilterFieldname(\'' + key + '\')"> ' + key + "</a></h5>"
-            var color = "found-some"
-            if (keys[key]["occurence"] == realEventNumber) {
-                color = "found-ok"
-            }
-            str += "<p>In <b class='" + color + "'>" + parseFloat(keys[key]["occurence"]/realEventNumber*100).toFixed(2) + "&#37;</b> of events</p>"
+    }
 
-            str += "<p>Type : <b>" + keys[key]["types"].join(", ") + "</b></p>"
+    for(key in keys) {
+        var fieldname = (isRootEventLevel ? "" : parent + ".") + key
 
-            if (keys[key]["types"].length == 1 && (keys[key]["types"][0] == "number")) {
-                str += "<p>Characteristics:</p><ul>"
-                str += "<p><b>min</b> : " + keys[key]["min"] + "</p>"
-                str += "<p><b>max</b> : " + keys[key]["max"] + "</p>"
-                str += "<p><b>avg</b> : " + keys[key]["avg"] + "</p>"
-            }
-
-            str += "</br><u><p>Top 5 values:</p></u><ul class='list-group'>"
-            var values = createTopXValues(keys[key]["values_occurences"], 5)
-            for (i in values) {
-                if (i > 5) {
-                    break
-                }
-                var valueToDisplay = String(values[i][0]).substring(0, 100)
-                if (String(values[i][0]).length != valueToDisplay.length) {
-                    valueToDisplay = valueToDisplay + "..."
-                }
-                var other_classes = ""
-                if (values.length == 1) {
-                    other_classes = " background-emphasis"
-                }
-                str += "<li class='list-group-item" + other_classes + "'><a style='color: inherit;' href='#output' " + 'onclick="closeDataExplorer(); applyFilter(\'' + escapeHtml(values[i][0]) + '\', false)"> ' + escapeHtml(valueToDisplay) + "</a>(" + parseFloat(values[i][1]/realEventNumber*100).toFixed(2) + "%)</li>"
-            } 
-            str +="</ul>"
-
-            str += "</div>"
-
-            $("#data_explorer").append(str)
+        str = '<div class="col-lg-3">'
+        str += "<h5 class='text-center text-info' style='margin-bottom: 2em; margin-top: 2em'><a style='color: inherit;' href='#output' " + 'onclick="closeDataExplorer(); applyFilterFieldname(\'' + key + '\')"> ' + fieldname + "</a></h5>"
+        var color = "found-some"
+        if (keys[key]["occurence"] == realEventNumber) {
+            color = "found-ok"
         }
+
+        str += "<p>In <b class='" + color + "'>" + parseFloat(keys[key]["occurence"]/realEventNumber*100).toFixed(2) + "&#37;</b> of events</p>"
+        str += "<p>Type : <b>" + keys[key]["types"].join(", ") + "</b></p>"
+
+        if (keys[key]["types"].length == 1 && (keys[key]["types"][0] == "number")) {
+            str += "<p>Characteristics:</p><ul>"
+            str += "<p><b>min</b> : " + keys[key]["min"] + "</p>"
+            str += "<p><b>max</b> : " + keys[key]["max"] + "</p>"
+            str += "<p><b>avg</b> : " + keys[key]["avg"] + "</p>"
+        }
+        
+        str += "</br><u><p>Top 5 values:</p></u><ul class='list-group'>"
+        var values = createTopXValues(keys[key]["values_occurences"], 5)
+
+        for (i in values) {
+            if (i > 5) {
+                break
+            }
+            var valueToDisplay = String(values[i][0]).substring(0, 100)
+            if (String(values[i][0]).length != valueToDisplay.length) {
+                valueToDisplay = valueToDisplay + "..."
+            }
+            var other_classes = ""
+            if (values.length == 1) {
+                other_classes = " background-emphasis"
+            }
+            str += "<li class='list-group-item" + other_classes + "'><a style='color: inherit;' href='#output' " + 'onclick="closeDataExplorer(); applyFilterFieldname(\'' + escapeHtml(values[i][0]) + '\', false)"> ' + escapeHtml(valueToDisplay) + "</a> (" + parseFloat(values[i][1]/realEventNumber*100).toFixed(2) + "%)</li>"
+        } 
+
+        str +="</ul>"
+        str += "</div>"
+        $("#data_explorer").append(str)
     }
 
     if (advicesShouldBeShown) {
