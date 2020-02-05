@@ -19,6 +19,7 @@
 .null { color: #009f6c; }
 .key { color: #2b7cc4; }
 .date { color: #6a00ff; }
+.warning { color: rgb(255, 126, 94); }
 
 .found-ok { color: #009f6c; }
 .found-some { color: rgb(255, 126, 94); }
