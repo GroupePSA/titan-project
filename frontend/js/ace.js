@@ -234,6 +234,12 @@ function resizeEditor(editor, height) {
     editor.resize();
 }
 
+// Set line focus on the filter editor
+
+function setLineFocusFilter(line) {
+    editor.gotoLine(line)
+}
+
 // Allow editors to be resizable!
 
 window.draggingAceEditor = {};

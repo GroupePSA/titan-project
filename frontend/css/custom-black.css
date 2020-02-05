@@ -23,6 +23,7 @@
 .null { color: #00c257; }
 .key { color: #e5ff87; }
 .date { color: #fa8484; }
+.warning { color: #F39C12; }
 
 .found-ok { color: #00c257; }
 .found-some { color: #F39C12; }
