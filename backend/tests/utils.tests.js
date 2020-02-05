@@ -65,7 +65,7 @@ describe("Utils testing", function () {
 
         it("compute length of a string", function (done) {
                 var str = "abc\bdef\nghi"
-                expect(string.numberOfLinesString(str)).not.to.equal(3)
+                expect(string.numberOfLinesString(str)).to.equal(3)
                 done()
         })
 

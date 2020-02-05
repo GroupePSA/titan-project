@@ -319,7 +319,7 @@ function addFilterTrace(filter) {
 
         filter = filter.replace(re, function(match, index) {
             var sub = filter.substring(0, index) + match
-            var currentLine = string.numberOfLinesString(sub)
+            var currentLine = string.numberOfLinesString(sub) - 1
 
             return match + ' tag_on_failure => ["_grokparsefailure", "failure line ' + currentLine + '"]'
         })
