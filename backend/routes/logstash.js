@@ -312,9 +312,7 @@ function addFilterTrace(filter) {
 
     // We add line number for grokparsefailures
 
-    if (filter.includes("tag_on_failure")) {
-        return filter
-    } else {
+    if (!filter.includes("tag_on_failure")) {
         var re = /grok\s*{/g
 
         filter = filter.replace(re, function(match, index) {
