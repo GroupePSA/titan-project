@@ -43,6 +43,13 @@ var whatsup = [
             "@metadata is now displayed, if present (and non-empty)",
             "Data explorer allow easily to set-up a filter in the output"
         ]
+    },
+    {
+        version: 6,
+        date: "13 february 2020",
+        news: [
+            "Corrected one bug that may cause @metadata to not being displayed"
+        ]
     }
 ]
 
