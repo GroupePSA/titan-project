@@ -14,6 +14,7 @@ const logger = require('../utils/logger').logger;
 var system = require("../utils/system")
 const constants = require("../utils/constants")
 var string = require("../utils/string")
+var tddUtils = require("../utils/tdd-utils")
 
 var OUTPUT_FILTER = "output { stdout { codec => json_lines } }";
 
@@ -130,6 +131,7 @@ router.post('/start', function (req, res) {
         delete req.body.no_cache
 
         var trace = req.body.trace == undefined || req.body.trace
+        var mode = req.body.mode == undefined ? "default" : req.body.mode
 
         var requestHash = system.createHash(req.body)
         var result = cache.get(requestHash)
@@ -159,7 +161,6 @@ router.post('/start', function (req, res) {
                 input.filehash = req.body.filehash;
             }
     
-            var logstash_input = buildLogstashInput(req.body.input_extra_fields, req.body['custom_codec'])
             var logstash_filter = req.body.logstash_filter;
             var logstash_version = req.body.logstash_version
     
@@ -175,13 +176,20 @@ router.post('/start', function (req, res) {
             if(trace) {
                 logstash_filter = addFilterTrace(logstash_filter) 
             }
+
+            var logstash_conf = ""
     
-            var logstash_conf = logstash_input + "\n" + logstash_filter + "\n" + OUTPUT_FILTER;
-    
+            if(mode == "default") {
+                var logstash_input = buildLogstashInput(req.body.input_extra_fields, req.body['custom_codec'])
+                logstash_conf = logstash_input + "\n" + logstash_filter + "\n" + OUTPUT_FILTER;
+            } else { // TDD
+                logstash_conf = logstash_filter;
+            }
+
             var logstash_conf_filepath = instanceDirectory + "logstash.conf"
     
             system.writeStringToFile(log, logstash_conf_filepath, logstash_conf, function () {
-                computeResult(log, id, res, input, instanceDirectory, logstash_version, requestHash);
+                computeResult(log, id, res, input, instanceDirectory, logstash_version, mode, requestHash);
             })
         }
 
@@ -195,7 +203,7 @@ router.post('/start', function (req, res) {
 
 // Compute the logstash result
 
-function computeResult(log, id, res, input, instanceDirectory, logstash_version, requestHash) {
+function computeResult(log, id, res, input, instanceDirectory, logstash_version, mode, requestHash) {
     log.info({
         "action": "start_process"
     }, id + " - Starting logstash process");
@@ -208,12 +216,13 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version,
         input_filepath = system.buildLocalLogFilepath(input.filehash)
     }
 
+    var entrypoint = (mode == "default" ? "/entrypoint.sh" : "/entrypoint-tdd.sh")
     var command_env = "-e LOGSTASH_RAM=" + constants.LOGSTASH_RAM + " -e THREAD_WORKER=" + constants.THREAD_WORKER + " -e MAX_EXEC_TIMEOUT=" + constants.MAX_EXEC_TIMEOUT_S 
     var command_security = ""
     if (constants.HARDEN_SECURITY == "true") {
         command_security = "--network=none"
     }
-    var command = "docker run --rm -v " + instanceDirectory + ":/app -v " + input_filepath + ":/app/data.log --hostname localhost " + command_env + " " + command_security + " titan-project-logstash:" + logstash_version;
+    var command = "docker run --rm --entrypoint " + entrypoint + " -v " + instanceDirectory + ":/app -v " + input_filepath + ":/app/data.log --hostname localhost " + command_env + " " + command_security + " titan-project-logstash:" + logstash_version;
 
     var options = {
         timeout: 100000, // Will be killed before in the Logstash entrypoint
@@ -248,6 +257,12 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version,
                 response_time: process_duration
             };
 
+            if (mode != "default") {
+                var [stdoutRecreated, testCases] = tddUtils.cleanTDDOutput(job_result["stdout"])
+                job_result["stdout"] = stdoutRecreated
+                job_result["testCases"] = testCases
+            }
+
             fs.remove(instanceDirectory, err => {
                 if (err) {
                     log.warn({
@@ -271,6 +286,12 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version,
             stdout: ex.toString('utf8'),
             status: -1
         };
+
+        if (mode != "default") {
+            var [stdoutRecreated, testCases] = tddUtils.cleanTDDOutput(job_result["stdout"])
+            job_result["stdout"] = stdoutRecreated
+            job_result["testCases"] = testCases
+        }
 
         fs.remove(instanceDirectory, err => {
             if (err) {
