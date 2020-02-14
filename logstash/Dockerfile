@@ -8,6 +8,10 @@ RUN apt-get update \
 RUN useradd -ms /bin/bash logstash
 RUN mkdir /logstash && chown -R logstash /logstash
 
+RUN wget -q https://github.com/magnusbaeck/logstash-filter-verifier/releases/download/1.6.0/logstash-filter-verifier_1.6.0_linux_amd64.tar.gz \
+    && tar -C /usr/local/bin/ -zxsf logstash-filter-verifier_1.6.0_linux_amd64.tar.gz ./logstash-filter-verifier \
+    && rm logstash-filter-verifier_1.6.0_linux_amd64.tar.gz
+
 USER logstash
 
 WORKDIR /logstash
@@ -34,10 +38,11 @@ ENV UPDATE_PLUGINS=$UPDATE_PLUGINS
 RUN /tmp/update_logstash_plugins.sh
 
 COPY entrypoint.sh /entrypoint.sh
+COPY entrypoint-tdd.sh /entrypoint-tdd.sh
 
 USER root
 
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh /entrypoint-tdd.sh
 
 USER logstash
 
