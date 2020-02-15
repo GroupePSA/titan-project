@@ -4,6 +4,12 @@ function cleanTDDOutput(stdout) {
 
     var testBlocks = stdout.split("\nComparing message")
 
+    if(testBlocks.length > 1) {
+        for(var i = 1 ; i < testBlocks.length ; i++) {
+            testBlocks[i] = "Comparing message" + testBlocks[i]
+        }
+    }
+
     if (testBlocks.length != 0 && testBlocks[0].match("^Running tests in")) {
         testBlocks.shift()
     }
@@ -24,6 +30,8 @@ function cleanTDDOutput(stdout) {
                 "real": real
             })
             recreatedLog += real + "\n"
+        } else {
+            recreatedLog += testBlocks[i] + "\n"
         }
     }
 
