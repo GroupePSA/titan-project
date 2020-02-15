@@ -15,7 +15,7 @@ describe("Logstash testing TDD", function () {
   this.timeout(config.MAX_TIMEOUT);
 
   it("should work with basic parameters", function (done) {
-    //if (!config.enable_slow_tests) this.skip()
+    if (!config.enable_slow_tests) this.skip()
 
     formData = {
       input_data: 'fields:\n  type: "syslog"\ntestcases:\n  - input:\n      - "Oct  6 20:55:29 myhost myprogram[31993]: This is a test message"\n    expected:\n      - "@timestamp": "2015-10-06T20:55:29.000Z"\n        host: "myhost"\n        message: "This is a test message"\n        pid: 31993\n        program: "myprogram"\n        type: "syslog"\n  - input:\n      - "Oct  6 20:55:29 myhost myprogram: This is a test message 2"\n    expected:\n      - "@timestamp": "2015-10-06T20:55:29.000Z"\n        host: "myhost"\n        message: "This is a test message 2"\n        program: "myprogram"\n        type: "syslog"',

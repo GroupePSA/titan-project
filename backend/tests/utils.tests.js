@@ -137,6 +137,22 @@ describe("Utils testing", function () {
             done()
         })
 
+        it("cleanup of tdd output should not fail on non-expected message", function (done) {
+            var output = 'fds\nfds\nfds'
+            var [fakeOutput, testCases] = tddUtils.cleanTDDOutput(output)
+
+            expect(fakeOutput).to.be.equal(output)
+            expect(testCases.length).to.be.equal(0)
+
+            var output2 = 'Running tests in data.yml...\nComparing message 1 of 2 from data.yml...\n{\n  "@timestamp": "2015-10-06T20:55:29.000Z",\n  "host": "myhost",\n  "message": "This is a test message",\n  "pid": 31993,\n'
+            var [fakeOutput2, testCases2] = tddUtils.cleanTDDOutput(output2)
+
+            expect(fakeOutput2).to.be.equal(output2)
+            expect(testCases2.length).to.be.equal(0)
+            
+            done()
+        })
+
     });
 
 

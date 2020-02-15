@@ -31,6 +31,10 @@ function cleanTDDOutput(stdout) {
         recreatedLog = recreatedLog.slice(0, -1)
     }
 
+    if(recreatedLog.length == 0) {
+        recreatedLog = stdout
+    }
+
     return [recreatedLog, testsCases]
 }
 
