@@ -14,9 +14,12 @@ function enableDevMode(config) {
     $('#file_upload_feature').removeClass('d-none')
   }
   $('#data_explorer_container').removeClass('d-none')
+  $('#column_result_search').removeClass('d-none')
+  $('#column_result_display_limit').removeClass('d-none')
 
   $('#input_data_title').text("Logs:")
   $('#input_data_title_description').html("You can copy/paste here your logs. You don't need to have lots of them, <strong>only keep representative logs</strong> of your formats. You should not have more than about 100 lines of logs.")
+  $('#output_description').text("The data process by Logstash will be displayed here.")
 
   console.debug("Enabled dev mode")
 }
@@ -33,15 +36,18 @@ function enableTestMode(config) {
     $('#file_upload_feature').addClass('d-none')
   }
   $('#data_explorer_container').addClass('d-none')
+  $('#column_result_search').addClass('d-none')
+  $('#column_result_display_limit').addClass('d-none')
 
   $('#input_data_title').text("Configuration:")
   $('#input_data_title_description').html("Your configuration from the <a href='https://github.com/magnusbaeck/logstash-filter-verifier/tree/1.6.0'>logstash-filter-verifier</a> project come here. YAML configuration only is supported.")
+  $('#output_description').text("The testcases will be displayed here.")
 
   console.debug("Enabled test mode")
 }   
 
-// Change text wrapping mode button trigger
-$('#change_mode').change(function () {
+// Switch current mode
+function switchMode() {
   if (mode == "dev") {
     enableTestMode()
     saveSession()
@@ -51,4 +57,22 @@ $('#change_mode').change(function () {
     saveSession()
     toastr.success("Enabled dev mode", "Success")
   }
+  refreshLogstasOutputDisplay()
+}
+
+// Change text wrapping mode button trigger
+$('#change_mode').change(function () {
+  switchMode()
 });
+
+// Define a handler for the Switch mode keyboard shortcut
+function doc_keyUp(e) {
+
+  // CTRL + B
+  if (e.ctrlKey && e.keyCode == 66) {
+    switchMode()
+  }
+}
+
+// Register the shortcut handler 
+document.addEventListener('keyup', doc_keyUp, false);

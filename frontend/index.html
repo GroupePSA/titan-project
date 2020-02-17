@@ -16,12 +16,11 @@
   <link id="css_theme_bootstrap" href="./static/bootswatch/flatly/bootstrap.min.css" rel="stylesheet">
   <link id="css_theme_bootstrap" href="./static/bootstrap4-toggle/css/bootstrap4-toggle.min.css" rel="stylesheet">
   <link href="./static/toastr/toastr.min.css" rel="stylesheet">
+  <link href="./static/jsondiffpatch/formatters-styles/html.css" rel="stylesheet">
   <link id="css_theme_custom" href="./css/custom.css" rel="stylesheet">
   <link id="css_theme_minimalist" href="./css/custom-nominimalist.css" rel="stylesheet">
   <link id="css_theme_text_wrapping" href="./css/custom-text-wrapping.css" rel="stylesheet">
   <link href="./css/custom-shared.css" rel="stylesheet">
-  <link href="./static/jsondiffpatch/formatters-styles/annotated.css" rel="stylesheet">
-  <link href="./static/jsondiffpatch/formatters-styles/html.css" rel="stylesheet">
 
 </head>
 
@@ -313,7 +312,7 @@
 
             <div class="row col-lg-12">
               <div class="col">
-                <div class="row text-center">
+                <div class="row text-center" id="column_result_search">
                   <p class="form-text text-muted minimalist-box">
                     If you want to filter the result
                   </p>
@@ -341,7 +340,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col">
+              <div class="col" id="column_result_display_limit">
                 <div class="row text-center" style="float: right">
                   <div class="form-group">
                     <p class="form-text text-muted minimalist-box">
@@ -393,8 +392,8 @@
             <div class="row col-lg-12">
               
               <div class="col">
-                <p style="margin-top: 1em" class="form-text text-muted minimalist-box">
-                  The data process by Logstash will be displayed here.
+                <p style="margin-top: 1em" class="form-text text-muted minimalist-box" id="output_description">
+                  OUTPUT_DESCRIPTION
                 </p>
               </div>
 

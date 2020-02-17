@@ -398,8 +398,58 @@ function sortDictionary(dict) {
     return tempDict;
 }
 
-// Display logstash log with formatting
+// Display diff between Logstash results & expected results for 'test' mode
+function refreshLogstashDiffDisplay() {
+    var res = ""
+    var successfulTests = 0
+    for(var i = 0 ; i < logstash_testing_result.length; i++) {
+        var expected = JSON.parse(logstash_testing_result[i].expected)
+        var real = JSON.parse(logstash_testing_result[i].real)
+        var delta = jsondiffpatch.diff(expected, real);
 
+        var case_color = (delta == undefined ? "found-ok" : "found-none")
+
+        var testedLine = undefined
+        try {
+            testedLine = latestTestConfiguration.testcases[i].description
+        } catch (error) {}
+
+        if(testedLine == undefined) {
+            try {
+                testedLine = latestTestConfiguration.testcases[i].input[0]
+            } catch (error) {
+                testedLine = "<i>Not found</i>"
+            }
+        }
+        
+        res += "<div class='row col-lg-12'><h5 class='col-lg-3 " + case_color + "'>Test case " + (i + 1) + ":</h5>"
+        res += "<p class='col-lg-9'>" + escapeHtml(testedLine) + "</p></div>"
+
+        if (delta != undefined) {
+            res += jsondiffpatch.formatters.html.format(delta, expected)
+        } else {
+            successfulTests += 1
+        }
+    }
+    $('#output').html(res);
+
+    var total_color = (successfulTests == logstash_testing_result.length ? "found-ok" : "found-none")
+
+    $("#number_events_displayed_container").removeClass("d-none")
+    $('#number_events_displayed').html("<span class='" + total_color + "'>" + successfulTests + " / " + logstash_testing_result.length + "</span> <b>successful</b> test")
+}
+
+// Choose what to display on Logstash output part
+function refreshLogstasOutputDisplay() {
+    // In the case of nothing concluant, we just fallback on default view
+    if(mode == "dev" || logstash_testing_result.length == 0) {
+        refreshLogstashLogDisplay()
+    } else {
+        refreshLogstashDiffDisplay()
+    }
+}
+
+// Display logstash log with formatting for dev mode
 function refreshLogstashLogDisplay() {
     var filter_value = $('#filter_display').val()
     var filter_regex_enabled = $('#filter_regex_enabled').is(':checked')
@@ -418,8 +468,6 @@ function refreshLogstashLogDisplay() {
     } else {
         number_lines_display = parseInt(number_lines_display, 10)
     }
-
-    $("#number_events_displayed_container").removeClass("d-none")
 
     var logstash_output_stderr_arr = logstash_output_stderr.split('\n')
     var lines = logstash_output_stderr_arr.concat(logstash_output)
@@ -482,6 +530,8 @@ function refreshLogstashLogDisplay() {
 
 
     // We display the number of events we got / we found
+
+    $("#number_events_displayed_container").removeClass("d-none")
 
     if (filter_enabled) {
 
@@ -549,7 +599,7 @@ function applyFilter(filter, reverse) {
     $('#filter_reverse_match_enabled').prop('checked', reverse)
     $('#filter_display').val(filter)
 
-    refreshLogstashLogDisplay()
+    refreshLogstasOutputDisplay()
 }
 
 // Apply a custom filter that will be surround by "<value>"
@@ -620,7 +670,12 @@ $('#start_process').click(function () {
         }
 
         if (remote_file_hash == undefined) {
-            body.input_data = inputEditor.getSession().getValue()
+            if(mode == "dev") {
+                body.input_data = inputEditor.getSession().getValue()
+            } else {
+                body.input_data = jsyaml.safeDump(latestTestConfiguration)
+            }
+            
         } else {
             body.filehash = remote_file_hash
         }
@@ -700,7 +755,7 @@ $('#start_process').click(function () {
 
                 var response_time_formatted = (data.job_result.response_time / 1000).toFixed(1)
 
-                refreshLogstashLogDisplay()
+                refreshLogstasOutputDisplay()
                 $("#backend_response_time").text(response_time_formatted)
                 $("#start_process").removeClass('disabled');
                 $("#download_output").removeClass('disabled');
