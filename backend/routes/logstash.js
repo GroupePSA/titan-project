@@ -131,7 +131,7 @@ router.post('/start', function (req, res) {
         delete req.body.no_cache
 
         var trace = req.body.trace == undefined || req.body.trace
-        var mode = req.body.mode == undefined ? "default" : req.body.mode
+        var mode = req.body.mode == undefined ? "dev" : req.body.mode
 
         var requestHash = system.createHash(req.body)
         var result = cache.get(requestHash)
@@ -179,7 +179,7 @@ router.post('/start', function (req, res) {
 
             var logstash_conf = ""
     
-            if(mode == "default") {
+            if(mode == "dev") {
                 var logstash_input = buildLogstashInput(req.body.input_extra_fields, req.body['custom_codec'])
                 logstash_conf = logstash_input + "\n" + logstash_filter + "\n" + OUTPUT_FILTER;
             } else { // TDD
@@ -216,7 +216,7 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version,
         input_filepath = system.buildLocalLogFilepath(input.filehash)
     }
 
-    var entrypoint = (mode == "default" ? "/entrypoint.sh" : "/entrypoint-tdd.sh")
+    var entrypoint = (mode == "dev" ? "/entrypoint.sh" : "/entrypoint-tdd.sh")
     var command_env = "-e LOGSTASH_RAM=" + constants.LOGSTASH_RAM + " -e THREAD_WORKER=" + constants.THREAD_WORKER + " -e MAX_EXEC_TIMEOUT=" + constants.MAX_EXEC_TIMEOUT_S 
     var command_security = ""
     if (constants.HARDEN_SECURITY == "true") {
@@ -257,7 +257,7 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version,
                 response_time: process_duration
             };
 
-            if (mode != "default") {
+            if (mode != "dev") {
                 var [stdoutRecreated, testCases] = tddUtils.cleanTDDOutput(job_result["stdout"])
                 job_result["stdout"] = stdoutRecreated
                 job_result["testCases"] = testCases
@@ -287,7 +287,7 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version,
             status: -1
         };
 
-        if (mode != "default") {
+        if (mode != "dev") {
             var [stdoutRecreated, testCases] = tddUtils.cleanTDDOutput(job_result["stdout"])
             job_result["stdout"] = stdoutRecreated
             job_result["testCases"] = testCases

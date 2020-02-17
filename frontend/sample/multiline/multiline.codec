@@ -1,4 +1,0 @@
-multiline {
-  pattern => "^\s"
-  what => "previous"
-}

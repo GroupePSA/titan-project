@@ -9,3 +9,7 @@
   cursor: row-resize;
   opacity: 1;
 }
+
+.toggle {
+  float: right;
+}

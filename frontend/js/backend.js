@@ -101,7 +101,7 @@ function logstashParsingProblem() {
         if (/^\[\d+.*\[ERROR\s*\].*$/.test(line)) {
             return { isProblem: true, cause: "logstash", filter: "[ERROR" }
         }
-        if (line.startsWith("{")) {
+        if (line.startsWith("{") && line.endsWith("}")) {
             var values = JSON.parse(line)
             if ("tags" in values) {
                 for (var j in values.tags) {
@@ -185,7 +185,7 @@ function findParsingOptimizationAdvices(parent, array) {
 
     for (var i = 0; i < array.length; i++) {
         var line = array[i]
-        if (line.startsWith("{")) {
+        if (line.startsWith("{") && line.endsWith("}")) {
             realEventNumber += 1
             var obj = JSON.parse(line)
             for (var key in obj) {
@@ -611,7 +611,8 @@ $('#start_process').click(function () {
             logstash_filter: editor.getSession().getValue(),
             input_extra_fields: getFieldsAttributesValues(),
             logstash_version: $('#logstash_version :selected').text(),
-            trace: enableDebug
+            trace: enableDebug,
+            mode: mode
         };
 
         if (latest_logstash_run != undefined && (Date.now() - latest_logstash_run) < refreshTimeCacheInvalidation) {
@@ -667,6 +668,7 @@ $('#start_process').click(function () {
 
                 logstash_output = cleanLogstashStdout(data.job_result.stdout)
                 logstash_output_stderr = cleanLogstashStderr(data.job_result.stderr)
+                logstash_testing_result = (mode == "test" && data.job_result.testCases != undefined ? data.job_result.testCases : [])
 
                 if(enableParsingAdvices) {
                     findParsingOptimizationAdvices("", logstash_output)

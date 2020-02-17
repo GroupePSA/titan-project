@@ -14,21 +14,21 @@ function checkRemoteFile() {
 }
 
 // Save current user session
-function saveSession() {
+function saveSession(config) {
     console.debug("Saving session into cookie")
-    var session = {
-        minimalist: ($('#css_theme_minimalist').attr('href').indexOf('nominimalist.css') != -1 ? false : true),
-        theme: ($('#css_theme_bootstrap').attr('href').indexOf('flatly') != -1 ? "white" : "black"),
-        fullscreen: ($('#main_container').hasClass("container") ? false : true),
-        text_wrapping: ($('#css_theme_text_wrapping').attr('href').indexOf('no-text-wrapping.css') != -1 ? false : true),
-        editor_wrapping: editor.getSession().getUseWrapMode(),
-        enable_parsing_advices: enableParsingAdvices,
-        enable_debug_mode: enableDebug,
-        logstash_version: $('#logstash_version :selected').text(),
-        input_editor_height: $('#' + inputEditor.container.id).css('height'),
-        editor_height: $('#' + editor.container.id).css('height'),
-        config: {
-            input_data: inputEditor.getSession().getValue(),
+
+    var previousConfig = {}
+    try {
+        var previousConfig = getConfig()
+    } catch (e) {
+        console.log("No previous config found")
+    }
+
+    if (config == undefined) {
+        config = {
+            mode: mode,
+            input_data: (mode == "dev" ? inputEditor.getSession().getValue() : previousConfig['input_data'] || ""),
+            tdd: (mode == "test" ? inputEditor.getSession().getValue() : previousConfig['tdd'] || ""),
             logstash_filter: editor.getSession().getValue(),
             input_fields: getFieldsAttributesValues(),
             custom_logstash_patterns: $('#custom_logstash_patterns_input').val(),
@@ -40,6 +40,20 @@ function saveSession() {
             number_lines_display: $("#number_lines_display").val()
         }
     }
+
+    var session = {
+        minimalist: ($('#css_theme_minimalist').attr('href').indexOf('nominimalist.css') != -1 ? false : true),
+        theme: ($('#css_theme_bootstrap').attr('href').indexOf('flatly') != -1 ? "white" : "black"),
+        fullscreen: ($('#main_container').hasClass("container") ? false : true),
+        text_wrapping: ($('#css_theme_text_wrapping').attr('href').indexOf('no-text-wrapping.css') != -1 ? false : true),
+        editor_wrapping: editor.getSession().getUseWrapMode(),
+        enable_parsing_advices: enableParsingAdvices,
+        enable_debug_mode: enableDebug,
+        logstash_version: $('#logstash_version :selected').text(),
+        input_editor_height: $('#' + inputEditor.container.id).css('height'),
+        editor_height: $('#' + editor.container.id).css('height'),
+        config: config
+    }
     store.set('session', session);
     if (JSON.stringify(store.get('session')) != JSON.stringify(session)) {
         toastr.warning('There was a problem while saving your work', 'Save problem')
@@ -47,25 +61,41 @@ function saveSession() {
     addSessionToHistory(session.config)
 }
 
+// Load specific parameters dependents of current mode, either 'dev' or 'test'
+function loadModeSpecificity(session) {
+    if(mode == "dev") {
+        inputEditor.getSession().setValue(session.input_data || "", -1)
+    } else {
+        inputEditor.getSession().setValue(session.tdd || "", -1)
+    }
+}
+
 // Load a config for user
-function loadConfig(session) {
+function loadConfig(config) {
     console.debug("Loading user config")
 
-    inputEditor.getSession().setValue(session.input_data, -1)
-    $('#custom_logstash_patterns_input').val(session.custom_logstash_patterns)
-    $('#filter_regex_enabled').prop('checked', session.filter_regex_enabled)
-    $('#filter_reverse_match_enabled').prop('checked', session.filter_reverse_match_enabled)
-    $('#filter_display').val(session.filter_display)
-    $("#number_lines_display option[data-value='" + session.number_lines_display + "']").attr("selected", "selected");
-    editor.getSession().setValue(session.logstash_filter, -1)
-    applyFieldsAttributes(session.input_fields)
-    if (session.custom_codec != "") {
-        enableMultilineCodec(session.custom_codec)
+    saveSession(config)
+
+    if (config.mode == undefined || config.mode == "dev") {
+        enableDevMode(config)
+    } else {
+        enableTestMode(config)
+    }
+
+    $('#custom_logstash_patterns_input').val(config.custom_logstash_patterns)
+    $('#filter_regex_enabled').prop('checked', config.filter_regex_enabled)
+    $('#filter_reverse_match_enabled').prop('checked', config.filter_reverse_match_enabled)
+    $('#filter_display').val(config.filter_display)
+    $("#number_lines_display option[data-value='" + config.number_lines_display + "']").attr("selected", "selected");
+    editor.getSession().setValue(config.logstash_filter, -1)
+    applyFieldsAttributes(config.input_fields)
+    if (config.custom_codec != "") {
+        enableMultilineCodec(config.custom_codec)
     } else {
         disableMultilineCodec()
     }
-    if (session.remote_file_hash != undefined) {
-        fileUploadEnabled(session.remote_file_hash)
+    if (config.remote_file_hash != undefined) {
+        fileUploadEnabled(config.remote_file_hash)
         checkRemoteFile()
     } else {
         fileUploadDisabled()

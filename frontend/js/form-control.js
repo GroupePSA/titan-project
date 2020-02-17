@@ -123,7 +123,18 @@ function userInputValid() {
     input_valid = false;
     redirectToLocation = "input_data_textarea"
   } else {
-    $('#input_data_title').removeClass("text-danger");
+    if(mode == "test") {
+      try {
+        jsyaml.safeLoad(input_data);
+        $('#input_data_title').removeClass("text-danger");
+      } catch (e) {
+        $('#input_data_title').addClass("text-danger");
+        error_reason = "The configuration isn't a correct <b>YAML</b> format"
+        redirectToLocation = "input_data_textarea"
+        input_valid = false;
+        console.log(e)
+      }
+    }
   }
 
 
@@ -194,7 +205,9 @@ function userInputValid() {
     redirectToastrClick(notifWarning, redirectToLocation)
   }
 
-  checkInputLogsEnding()
+  if(mode == "dev") {
+    checkInputLogsEnding()
+  }
 
   return input_valid
 }

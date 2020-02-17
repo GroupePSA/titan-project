@@ -14,11 +14,14 @@
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="./static/fontawesome/css/all.min.css">
   <link id="css_theme_bootstrap" href="./static/bootswatch/flatly/bootstrap.min.css" rel="stylesheet">
+  <link id="css_theme_bootstrap" href="./static/bootstrap4-toggle/css/bootstrap4-toggle.min.css" rel="stylesheet">
   <link href="./static/toastr/toastr.min.css" rel="stylesheet">
   <link id="css_theme_custom" href="./css/custom.css" rel="stylesheet">
   <link id="css_theme_minimalist" href="./css/custom-nominimalist.css" rel="stylesheet">
   <link id="css_theme_text_wrapping" href="./css/custom-text-wrapping.css" rel="stylesheet">
   <link href="./css/custom-shared.css" rel="stylesheet">
+  <link href="./static/jsondiffpatch/formatters-styles/annotated.css" rel="stylesheet">
+  <link href="./static/jsondiffpatch/formatters-styles/html.css" rel="stylesheet">
 
 </head>
 
@@ -228,26 +231,30 @@
 
           </div>
 
-          <h4 id="input_data_title" class="col-lg-6" style="margin-top: 2em">Logs:</h4>
+          <h4 id="input_data_title" class="col-lg-6" style="margin-top: 2em">INPUT TITLE</h4>
           <div class="col-lg-6 d-none" style="margin-top: 2.5em" id="file_upload_feature"><input type="file" style="float: right"
               id="upload_logfile"></input><a id="upload_logfile_cancel" style="float: right; display: none"><i
                 class="fas fa-times text-danger" aria-hidden="true"> Cancel the upload</i></a></div>
-          <p class="form-text text-muted minimalist-box">
-            You can copy/paste here your logs. You don't need to have lots of them, <strong>only keep representative
-              logs</strong> of your formats. You should not have more than about 100 lines of logs.
+          <p id="input_data_title_description" class="form-text text-muted minimalist-box col-lg-12">
+            DESCRIPTION
           </p>
 
-          <div class="col-lg-12 app_editor_wrapper" id="input_data_textarea_wrapper" style="margin-top: 1em">
+          <div class="col-lg-12 app_editor_wrapper" id="input_data_textarea_wrapper" style="margin-top: 1em; margin-bottom: 1.2em;">
             <pre id="input_data_textarea" style="position: relative; height: 20em; " class="col-lg-12" rows="10"
               placeholder="Copy/Paste your logs file here !"></pre>
               <div id="input_data_textarea_dragbar" class="app_editor_dragbar"></div>
           </div>
 
-          <div>
-            <h4 id="logstash_filter_title" style="margin-top: 2em">Logstash filter:</h4>
-            <p class="form-text text-muted minimalist-box">
+          <div class="row col-lg-12">
+            <h4 id="logstash_filter_title" style="margin-top: 0.8em" class="col-lg-6">Logstash filter:</h4>
+            <div class="col-lg-6" style="margin-top: 2.5em;">
+              <input id="change_mode" type="checkbox" checked data-toggle="toggle" data-on="Dev" data-off="Testing" data-onstyle="primary" data-offstyle="info">
+            </div>
+            <p class="form-text text-muted minimalist-box col-lg-12">
               Here is the place where you can create your Logstash filter.
             </p>
+            
+
           </div>
 
           <div class="col-lg-12 app_editor_wrapper" style="margin-top: 2em" id="logstash_filter_textarea_wrapper">
@@ -608,6 +615,7 @@
   <script src="./static/jquery/jquery.min.js"></script>
   <script src="./static/showdown/showdown.min.js"></script>
   <script src="./static/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="./static/bootstrap4-toggle/js/bootstrap4-toggle.min.js"></script>
   <script src="./static/store/store.everything.min.js"></script>
   <script src="./static/toastr/toastr.min.js"></script>
   <script src="./static/forge/forge.min.js"></script>
@@ -615,6 +623,8 @@
   <script src="./static/src-min-noconflict/ext-language_tools.js"></script>
   <script src="./static/src-min-noconflict/ext-beautify.js"></script>
   <script src="./static/dexie/dexie.min.js"></script>
+  <script src="./static/js-yaml/js-yaml.min.js"></script>
+  <script src="./static/jsondiffpatch/jsondiffpatch.umd.slim.js"></script>
 
   <script src="./js/ace-mode-logstash.js"></script>
   <script src="./js/ie-detector.js"></script>
@@ -629,6 +639,7 @@
   <script src="./js/whatsup.js"></script>
   <script src="./js/session-history.js"></script>
   <script src="./js/session.js"></script>
+  <script src="./js/mode.js"></script>
   <script src="./js/load-logstash-versions.js"></script>
   <script src="./js/main.js"></script>
 

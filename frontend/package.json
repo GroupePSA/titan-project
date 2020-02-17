@@ -35,6 +35,11 @@
         "src": "dist/*",
         "target": "static/bootstrap"
       },
+      "bootstrap4-toggle": {
+        "version": "3.6.1",
+        "src": "*",
+        "target": "static/bootstrap4-toggle"
+      },
       "bootswatch": {
         "version": "4.3.1",
         "src": "{dist/darkly/,dist/flatly/}",
@@ -63,6 +68,16 @@
         "version": "2.0.4",
         "src": "dist/*",
         "target": "static/dexie"
+      },
+      "js-yaml": {
+        "version": "3.13.1",
+        "src": "dist/*",
+        "target": "static/js-yaml"
+      },
+      "jsondiffpatch": {
+        "version": "0.4.1",
+        "src": "dist/*",
+        "target": "static/jsondiffpatch"
       }
     }
   }

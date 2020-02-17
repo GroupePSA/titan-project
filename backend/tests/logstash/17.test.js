@@ -22,7 +22,7 @@ describe("Logstash testing TDD", function () {
       logstash_filter: "filter{mutate{add_field=>{'test'=> 'test2'}}}",
       input_extra_fields: [{ attribute: "type", value: "superTest" }],
       logstash_version: config.logstashVersion,
-      mode: "tdd"
+      mode: "test"
     }
 
     chai.request(app)
