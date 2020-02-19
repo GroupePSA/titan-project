@@ -422,7 +422,7 @@ function refreshLogstashDiffDisplay() {
             }
         }
         
-        res += "<div class='row col-lg-12'><h5 class='col-lg-3 " + case_color + "'>Test case " + (i + 1) + ":</h5>"
+        res += "<div class='row col-lg-12' style='margin-top: 1em;margin-bottom: 0.5em'><h5 class='col-lg-3 " + case_color + "'>Test case " + (i + 1) + ":</h5>"
         res += "<p class='col-lg-9'>" + escapeHtml(testedLine) + "</p></div>"
 
         if (delta != undefined) {
@@ -433,10 +433,14 @@ function refreshLogstashDiffDisplay() {
     }
     $('#output').html(res);
 
-    var total_color = (successfulTests == logstash_testing_result.length ? "found-ok" : "found-none")
-
-    $("#number_events_displayed_container").removeClass("d-none")
-    $('#number_events_displayed').html("<span class='" + total_color + "'>" + successfulTests + " / " + logstash_testing_result.length + "</span> <b>successful</b> test")
+    if(successfulTests == logstash_testing_result.length) {
+        manageResultLogstashProcess("success", "Tests OK", "All tests passed!")
+    } else if (successfulTests != 0) {
+        manageResultLogstashProcess("error", "Tests NOK", "Only " + successfulTests + " / " + logstash_testing_result.length + " tests successful")
+    } else {
+        manageResultLogstashProcess("error", "Tests really NOK", "No tests successful")
+    }
+    
 }
 
 // Choose what to display on Logstash output part
@@ -725,7 +729,7 @@ $('#start_process').click(function () {
                 logstash_output_stderr = cleanLogstashStderr(data.job_result.stderr)
                 logstash_testing_result = (mode == "test" && data.job_result.testCases != undefined ? data.job_result.testCases : [])
 
-                if(enableParsingAdvices) {
+                if(enableParsingAdvices && mode == "dev") {
                     findParsingOptimizationAdvices("", logstash_output)
                 }
 
@@ -743,7 +747,7 @@ $('#start_process').click(function () {
                         notif = manageResultLogstashProcess('warning', 'Parsing problems', 'Logstash <a class="alert-link" href="#output" onclick="applyFilter(\'' + parsingResult.filter + '\')">failed to parse</a> some of your events')
                         redirectToastrClick(notif, "logstash_filter_textarea")
                     }
-                } else {
+                } else if (mode == "dev") {
                     notif = manageResultLogstashProcess('success', 'Success', 'Configuration parsing is done !')
                     redirectToastrClick(notif, "output")
                 }

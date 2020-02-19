@@ -43,6 +43,9 @@ function enableTestMode(config) {
   $('#input_data_title_description').html("Your configuration from the <a href='https://github.com/magnusbaeck/logstash-filter-verifier/tree/1.6.0'>logstash-filter-verifier</a> project come here. YAML configuration only is supported.")
   $('#output_description').text("The testcases will be displayed here.")
 
+  $("#parsing_advices").addClass('d-none')
+  $("#number_events_displayed").addClass('d-none')
+
   console.debug("Enabled test mode")
 }   
 
