@@ -217,12 +217,13 @@ function computeResult(log, id, res, input, instanceDirectory, logstash_version,
     }
 
     var entrypoint = (mode == "dev" ? "/entrypoint.sh" : "/entrypoint-tdd.sh")
+    var local_input_filepath = (mode == "dev" ? "/app/data.log" : "/app/data.yml")
     var command_env = "-e LOGSTASH_RAM=" + constants.LOGSTASH_RAM + " -e THREAD_WORKER=" + constants.THREAD_WORKER + " -e MAX_EXEC_TIMEOUT=" + constants.MAX_EXEC_TIMEOUT_S 
     var command_security = ""
     if (constants.HARDEN_SECURITY == "true") {
         command_security = "--network=none"
     }
-    var command = "docker run --rm --entrypoint " + entrypoint + " -v " + instanceDirectory + ":/app -v " + input_filepath + ":/app/data.log --hostname localhost " + command_env + " " + command_security + " titan-project-logstash:" + logstash_version;
+    var command = "docker run --rm --entrypoint " + entrypoint + " -v " + instanceDirectory + ":/app -v " + input_filepath + ":" + local_input_filepath + " --hostname localhost " + command_env + " " + command_security + " titan-project-logstash:" + logstash_version;
 
     var options = {
         timeout: 100000, // Will be killed before in the Logstash entrypoint
