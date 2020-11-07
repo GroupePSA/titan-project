@@ -25,6 +25,8 @@ function enableDevMode(config) {
     $("#number_events_displayed_container").removeClass('d-none')
   }
 
+  enableGuessFile()
+
   console.debug("Enabled dev mode")
 }
 
@@ -49,6 +51,8 @@ function enableTestMode(config) {
 
   $("#parsing_advices").addClass('d-none')
   $('#number_events_displayed_container').addClass('d-none')
+
+  disableGuessFile()
 
   console.debug("Enabled test mode")
 }   
