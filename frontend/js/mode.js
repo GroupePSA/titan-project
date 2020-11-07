@@ -44,7 +44,7 @@ function enableTestMode(config) {
   $('#column_result_display_limit').addClass('d-none')
 
   $('#input_data_title').text("Configuration:")
-  $('#input_data_title_description').html("Your configuration from the <a target='_blank' href='https://github.com/magnusbaeck/logstash-filter-verifier/tree/1.6.0'>logstash-filter-verifier</a> project come here. YAML configuration only is supported.")
+  $('#input_data_title_description').html("Your configuration from the <a target='_blank' href='https://github.com/magnusbaeck/logstash-filter-verifier/tree/1.6.0'>logstash-filter-verifier</a> project come here. YAML configuration only is supported. Custom codec <b>may not work</b>.")
   $('#output_description').text("The testcases will be displayed here.")
 
   $("#parsing_advices").addClass('d-none')
