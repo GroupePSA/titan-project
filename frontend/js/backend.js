@@ -63,6 +63,7 @@ function cleanLogstashStdout(stdout) {
             && !/^\[\d+.*WARN.*logstash\.config\.source.*Ignoring.*pipelines.yml.*$/.test(line)
             && !/^\[\d+.*WARN.*logstash\.agent.*stopping pipeline.*$/.test(line)
             && !/^\[\d+.*org\.logstash\.instrument\.metrics\.gauge\.LazyDelegatingGauge.*A gauge metric.*This may result in invalid serialization.*$/.test(line)
+            && !/^.*\[main\] 'pipeline\.ordered' is enabled and is likely less efficient, consider disabling if preserving event order is not necessary$/.test(line)
             && !/^The stdin plugin is now waiting for input:$/.test(line)) {
             stdout_cleaned.push(line)
         }
@@ -83,6 +84,8 @@ function cleanLogstashStderr(stderr) {
             && !/^WARNING: All illegal access operations will be denied in a future release$/.test(line)
             && !/^OpenJDK 64-Bit Server VM warning: Using the ParNew young collector with the Serial old collector is deprecated and will likely be removed in a future release$/.test(line)
             && !/^WARNING: An illegal reflective access operation has occurred$/.test(line)
+            && !/^WARNING: Illegal reflective access by org\.jruby\.ext\.openssl\.SecurityHelper.*$/.test(line)
+            && !/^WARNING: Please consider reporting this to the maintainers of org\.jruby\.ext\.openssl\.SecurityHelper$/.test(line)
             && !/^Thread\.exclusive is deprecated, use Thread::Mutex$/.test(line)) {
             stderr_cleaned.push(line)
         }
