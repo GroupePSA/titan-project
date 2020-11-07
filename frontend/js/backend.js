@@ -441,6 +441,10 @@ function refreshLogstashDiffDisplay() {
             successfulTests += 1
         }
     }
+    if(res.trim() == "") {
+        res = "The testscases result will be shown here !"
+    }
+
     $('#output').html(res);
 
     if(successfulTests == logstash_testing_result.length) {
@@ -456,9 +460,11 @@ function refreshLogstashDiffDisplay() {
 // Choose what to display on Logstash output part
 function refreshLogstasOutputDisplay() {
     // In the case of nothing concluant, we just fallback on default view
-    if(mode == "dev" || logstash_testing_result.length == 0) {
+    if(mode == "dev") {
+        console.log("log")
         refreshLogstashLogDisplay()
     } else {
+        console.log("dev")
         refreshLogstashDiffDisplay()
     }
 }

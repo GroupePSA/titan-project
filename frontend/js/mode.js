@@ -58,6 +58,8 @@ function enableTestMode(config) {
 
   disableGuessFile()
 
+  $("#output").html("The testscases result will be shown here !")
+
   console.debug("Enabled test mode")
 }   
 
