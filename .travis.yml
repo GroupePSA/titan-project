@@ -16,7 +16,7 @@ before_install:
 - sudo apt-get update
 - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 - sudo curl -Ls https://github.com/GroupePSA/log-parser/releases/download/v0.0.1/parser --output /usr/local/bin/parser && sudo chmod +x /usr/local/bin/parser
-- docker-compose -f logstash/docker-compose.yml build logstash_6.8.3
+- docker-compose -f logstash/docker-compose.yml build logstash_6.8.13
 - npm --prefix ./backend install
 script:
 - npm --prefix ./backend run coverage
