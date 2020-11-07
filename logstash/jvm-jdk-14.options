@@ -17,9 +17,12 @@
 ################################################################
 
 ## GC configuration
--XX:+UseConcMarkSweepGC
--XX:CMSInitiatingOccupancyFraction=75
--XX:+UseCMSInitiatingOccupancyOnly
+#-XX:+UseConcMarkSweepGC
+#-XX:CMSInitiatingOccupancyFraction=75
+#-XX:+UseCMSInitiatingOccupancyOnly
+
+-XX:+TieredCompilation
+-XX:TieredStopAtLevel=1
 
 ## Locale
 # Set the locale language
@@ -46,7 +49,7 @@
 #-Djna.nosys=true
 
 # Turn on JRuby invokedynamic
--Djruby.compile.invokedynamic=true
+#-Djruby.compile.invokedynamic=true
 # Force Compilation
 -Djruby.jit.threshold=0
 # Make sure joni regexp interruptability is enabled
