@@ -21,10 +21,14 @@ function enableDevMode(config) {
   $('#input_data_title_description').html("You can copy/paste here your logs. You don't need to have lots of them, <strong>only keep representative logs</strong> of your formats. You should not have more than about 100 lines of logs.")
   $('#output_description').text("The data process by Logstash will be displayed here.")
 
+  if($("#number_events_displayed").val().trim() != "") {
+    $("#number_events_displayed_container").removeClass('d-none')
+  }
+
   console.debug("Enabled dev mode")
 }
 
-// Disable the test mode
+// Enabled the test mode
 function enableTestMode(config) {
   mode = "test"
 
@@ -44,7 +48,7 @@ function enableTestMode(config) {
   $('#output_description').text("The testcases will be displayed here.")
 
   $("#parsing_advices").addClass('d-none')
-  $("#number_events_displayed").addClass('d-none')
+  $('#number_events_displayed_container').addClass('d-none')
 
   console.debug("Enabled test mode")
 }   

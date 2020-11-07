@@ -545,25 +545,27 @@ function refreshLogstashLogDisplay() {
 
     // We display the number of events we got / we found
 
-    $("#number_events_displayed_container").removeClass("d-none")
+    if(mode == "dev") {
+        $("#number_events_displayed_container").removeClass("d-none")
 
-    if (filter_enabled) {
+        if (filter_enabled) {
 
-        if (matchNumber > realLinesNumber) {
-            matchNumber = realLinesNumber
+            if (matchNumber > realLinesNumber) {
+                matchNumber = realLinesNumber
+            }
+
+            var color = "found-some"
+            if (matchNumber == realLinesNumber) {
+                color = "found-ok"
+            } else if (matchNumber == 0) {
+                color = "found-none"
+            }
+
+            $('#number_events_displayed').html("<span class='" + color + "'>" + matchNumber + " / " + realLinesNumber + "</span> events <b>matched</b>")
+        } else {
+            $('#number_events_displayed').html("<b>" + realLinesNumber + "</b> total events")
+
         }
-
-        var color = "found-some"
-        if (matchNumber == realLinesNumber) {
-            color = "found-ok"
-        } else if (matchNumber == 0) {
-            color = "found-none"
-        }
-
-        $('#number_events_displayed').html("<span class='" + color + "'>" + matchNumber + " / " + realLinesNumber + "</span> events <b>matched</b>")
-    } else {
-        $('#number_events_displayed').html("<b>" + realLinesNumber + "</b> total events")
-
     }
 
     $('#output').html(res);
