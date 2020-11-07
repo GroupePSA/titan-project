@@ -179,6 +179,8 @@ function findParsingOptimizationAdvices(parent, array) {
 
     var fieldsToSkip = []
     var realEventNumber = 0
+    // ECS version v1.6.0
+    var ecs_fields_root = ["agent", "as", "base", "client", "cloud", "code_signature", "container", "destination", "dll", "dns", "ecs", "error", "event", "file", "geo", "group", "hash", "host", "http", "interface", "log", "network", "observer", "organization", "os", "package", "pe", "process", "registry", "related", "rule", "server", "service", "source", "thread", "tls", "tracing", "url", "user", "user_agent", "vlan", "vulnerability", "x509"]
 
     var fieldConversionBlacklist = ["port"]
 
@@ -291,6 +293,11 @@ function findParsingOptimizationAdvices(parent, array) {
             advicesShouldBeShown = true
             str = '<li>Value of field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
             str += " could probably be <b>trimed</b>, as it sometime start or end with blanck characters</li>"
+            $("#parsing_advices").append(str);
+        } else if (isRootEventLevel && keys[key]["types"].length == 1 && keys[key]["types"][0] == "string" && ecs_fields_root.includes(key)) {
+            advicesShouldBeShown = true
+            str = '<li>Value of field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
+            str += " is a string, and may provoque type collision if you're willing to use <a target='_blank' href='https://www.elastic.co/guide/en/ecs/current/index.html'>Elasticsearch ECS</a> in the futur (object expected)</li>"
             $("#parsing_advices").append(str);
         }
     }
