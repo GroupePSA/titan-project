@@ -64,6 +64,9 @@ ace.define("ace/mode/logstash_highlight_rules", ["require", "exports", "module",
                         token: "comment",
                         regex: "#.*$"
                     }, {
+                        token: "support.class",
+                        regex: "/([^/\\\\]|\\\\/)*/"
+                    }, {
                         token: "comment",
                         regex: "^=begin(?:$|\\s.*$)",
                         next: "comment"
@@ -90,37 +93,33 @@ ace.define("ace/mode/logstash_highlight_rules", ["require", "exports", "module",
                             token: "constant.language.escape",
                             regex: /\\(?:[nsrtvfbae'"\\]|c.|C-.|M-.(?:\\C-.)?|[0-7]{3}|x[\da-fA-F]{2}|u[\da-fA-F]{4})/
                         },{
-                            token: ["string", "keyword.type", "string", "constant.language.boolean", "string"],
-                            regex: "(%{)([a-zA-Z0-9_]+)(:)([@a-zA-Z0-9_]+)(})"
+                            token: ["string", "keyword.type", "string", "constant.language.boolean", "string", "keyword.type", "string"],
+                            regex: "(%{)([a-zA-Z0-9_]+)(:)([@a-zA-Z0-9_\.]+)(?:(:)(int|float))?(})"
                         },{
-                            token: ["string", "keyword.type", "string", "constant.language.boolean", "string"],
-                            regex: "(%{)([a-zA-Z0-9_]+)(:)((?:\[[@a-zA-Z0-9_]+\])+)(})"
+                            token: ["string", "keyword.type", "string", "constant.language.boolean", "string", "keyword.type", "string"],
+                            regex: "(%{)([a-zA-Z0-9_]+)(:)((?:\[[@a-zA-Z0-9_\.]+\])+)(?:(:)(int|float))?(})"
                         },{
                             token: ["string", "keyword.type", "string"],
                             regex: "(%{)([A-Z0-9_]+)(})"
                         },{
-                            token: ["string", "constant.language.boolean", "string"],
-                            regex: "(\\(\\?<)([^>]+)(>)"
-                        },{
-                            // event.set(\"myEventField\"
-                            token: ["string", "constant.language.boolean", "string"],
-                            regex: /(event\.(?:get|set)\(\\")([^"]+)(\\")/
-                        },{
-                            // event.set('myEventField'
-                            token: ["string", "constant.language.boolean", "string"],
-                            regex: /(event\.(?:get|set)\(')([^']+)(')/
+                            token: ["string", "constant.language.boolean", "string", "keyword.type", "string"],
+                            regex: "(\\(\\?<)((?:[@a-zA-Z0-9_\\.]+)|(?:(?:\\[[@a-zA-Z0-9_\.]+\\])+))(>)([^)\\\\]*)(\\))"
                         },{
                             token: "constant.language.boolean",
-                            regex: "(%{)([?+&]?[@a-zA-Z0-9_]+(/\\d+)?)(})"
+                            regex: "(%{)([?+&]?[@a-zA-Z0-9_\\.]+(/\\d+)?)(})"
                         },{
                             token: "keyword.type",
                             regex: "(integer_eu|integer|float_eu|float|string|boolean|int)",
                         },{
                             token: ["string", "constant.language.boolean", "string"],
-                            regex: "(\\[)([@a-zA-Z_0-9]+)(\\])",
+                            regex: "(\\[)([@a-zA-Z0-9_\\.]+)(\\])",
                         },{
                             token: ["support.class"],
-                            regex: "\\${[_a-zA-Z]+}"
+                            regex: "\\${[_a-zA-Z1-9]+}"
+                        },{
+                            // ruby event binding
+                            token: ["string", "support.class"],
+                            regex: "(event\\.)(get|set)"
                         },{
                             token: "string.end",
                             regex: /"/,
@@ -135,37 +134,33 @@ ace.define("ace/mode/logstash_highlight_rules", ["require", "exports", "module",
                             token: "constant.language.escape",
                             regex: /\\(?:[nsrtvfbae'"\\]|c.|C-.|M-.(?:\\C-.)?|[0-7]{3}|x[\da-fA-F]{2}|u[\da-fA-F]{4})/
                         },{
-                            token: ["string", "keyword.type", "string", "constant.language.boolean", "string"],
-                            regex: "(%{)([a-zA-Z0-9_]+)(:)([@a-zA-Z0-9_]+)(})"
+                            token: ["string", "keyword.type", "string", "constant.language.boolean", "string", "keyword.type", "string"],
+                            regex: "(%{)([a-zA-Z0-9_]+)(:)([@a-zA-Z0-9_\.]+)(?:(:)(int|float))?(})"
                         },{
-                            token: ["string", "keyword.type", "string", "constant.language.boolean", "string"],
-                            regex: "(%{)([a-zA-Z0-9_]+)(:)((?:\[[@a-zA-Z0-9_]+\])+)(})"
+                            token: ["string", "keyword.type", "string", "constant.language.boolean", "string", "keyword.type", "string"],
+                            regex: "(%{)([a-zA-Z0-9_]+)(:)((?:\[[@a-zA-Z0-9_\.]+\])+)(?:(:)(int|float))?(})"
                         },{
                             token: ["string", "keyword.type", "string"],
                             regex: "(%{)([A-Z0-9_]+)(})"
                         },{
-                            token: ["string", "constant.language.boolean", "string"],
-                            regex: "(\\(\\?<)([^>]+)(>)"
-                        },{
-                            // event.set("myEventField"
-                            token: ["string", "constant.language.boolean", "string"],
-                            regex: /(event\.(?:get|set)\(")([^"]+)(")/
-                        },{
-                            // event.set(\'myEventField\'
-                            token: ["string", "constant.language.boolean", "string"],
-                            regex: /(event\.(?:get|set)\(\\')([^']+)(\\')/
+                            token: ["string", "constant.language.boolean", "string", "keyword.type", "string"],
+                            regex: "(\\(\\?<)((?:[@a-zA-Z0-9_\\.]+)|(?:(?:\\[[@a-zA-Z0-9_\.]+\\])+))(>)([^)\\\\]*)(\\))"
                         },{
                             token: "constant.language.boolean",
-                            regex: "(%{)([?+&]?[@a-zA-Z0-9_]+(/\\d+)?)(})"
+                            regex: "(%{)([?+&]?[@a-zA-Z0-9_\\.]+(/\\d+)?)(})"
                         },{
                             token: "keyword.type",
                             regex: "(integer_eu|integer|float_eu|float|string|boolean|int)",
                         },{
                             token: ["string", "constant.language.boolean", "string"],
-                            regex: "(\\[)([@a-zA-Z_0-9]+)(\\])",
+                            regex: "(\\[)([@a-zA-Z0-9_\\.]+)(\\])",
                         },{
                             token: ["support.class"],
-                            regex: "\\${[_a-zA-Z]+}"
+                            regex: "\\${[_a-zA-Z1-9]+}"
+                        },{
+                            // ruby event binding
+                            token: ["string", "support.class"],
+                            regex: "(event\\.)(get|set)"
                         },{
                             token: "string.end",
                             regex: /'/,
