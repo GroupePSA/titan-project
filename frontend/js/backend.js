@@ -461,10 +461,10 @@ function refreshLogstashDiffDisplay() {
 function refreshLogstasOutputDisplay() {
     // In the case of nothing concluant, we just fallback on default view
     if(mode == "dev") {
-        console.log("log")
+        console.debug("Switching to log mode")
         refreshLogstashLogDisplay()
     } else {
-        console.log("dev")
+        console.debug("Switching to dev mode")
         refreshLogstashDiffDisplay()
     }
 }
