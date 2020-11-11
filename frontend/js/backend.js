@@ -2,6 +2,11 @@
 // Backend communication //
 ///////////////////////////
 
+// Build the button for the output convertion to other mode
+function buildPreOutputButton(text) {
+    return '<button type="submit" class="btn btn-light" id="convert" style="position:absolute; top: 1em; right:1em; font-size: 0.8em;">' + text + '</button>'
+}
+
 // Escape a string to html
 function escapeHtml(unsafe) {
     return unsafe
@@ -410,8 +415,16 @@ function sortDictionary(dict) {
 
 // Display diff between Logstash results & expected results for 'test' mode
 function refreshLogstashDiffDisplay() {
-    var res = ""
+    var res = buildPreOutputButton("Build log sample")
     var successfulTests = 0
+    var maxTextSize = 60
+
+    var logstash_output_stderr_arr = logstash_output_stderr.split('\n')
+    for (var i = 0 ; i < logstash_output_stderr_arr.length ; i++) {
+        var line = logstash_output_stderr_arr[i]
+        res = res + "<span class='text-danger'>" + line + "</span>\n"
+    }
+
     for(var i = 0 ; i < logstash_testing_result.length; i++) {
         var expected = JSON.parse(logstash_testing_result[i].expected)
         var real = JSON.parse(logstash_testing_result[i].real)
@@ -421,18 +434,24 @@ function refreshLogstashDiffDisplay() {
 
         var testedLine = undefined
         try {
-            testedLine = latestTestConfiguration.testcases[i].description
+            testedLine = latestTestConfiguration.testcases[i].description.slice(0, maxTextSize)
+            if(testedLine.length != latestTestConfiguration.testcases[i].description.length) {
+                testedLine = testedLine + "..."
+            }
         } catch (error) {}
 
         if(testedLine == undefined) {
             try {
-                testedLine = latestTestConfiguration.testcases[i].input[0]
+                testedLine = latestTestConfiguration.testcases[i].input[0].slice(0, maxTextSize)
+                if(testedLine.length != latestTestConfiguration.testcases[i].input[0].length) {
+                    testedLine = testedLine + "..."
+                }
             } catch (error) {
                 testedLine = "<i>Not found</i>"
             }
         }
         
-        res += "<div class='row col-lg-12' style='margin-top: 1em;margin-bottom: 0.5em'><h5 class='col-lg-3 " + case_color + "'>Test case " + (i + 1) + ":</h5>"
+        res += "<div class='row col-lg-10' style='margin-top: 1em;margin-bottom: 0.5em'><h5 class='col-lg-3 " + case_color + "'>Test case " + (i + 1) + ":</h5>"
         res += "<p class='col-lg-9'>" + escapeHtml(testedLine) + "</p></div>"
 
         if (delta != undefined) {
@@ -446,6 +465,7 @@ function refreshLogstashDiffDisplay() {
     }
 
     $('#output').html(res);
+    buildConvertTrigger()
 
     if(successfulTests == logstash_testing_result.length) {
         manageResultLogstashProcess("success", "Tests OK", "All tests passed!")
@@ -495,7 +515,7 @@ function refreshLogstashLogDisplay() {
     var stderr_errors_lines = logstash_output_stderr_arr.length
     var matchNumber = 0
     var realLinesNumber = 0
-    var res = ""
+    var res = buildPreOutputButton("Build the dev spec")
 
     for (var i = 0; i < lines.length; i++) {
 
@@ -575,6 +595,7 @@ function refreshLogstashLogDisplay() {
     }
 
     $('#output').html(res);
+    buildConvertTrigger()
 }
 
 // Manage if backend fail to treat user input
