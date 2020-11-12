@@ -120,11 +120,15 @@ function buildConvertTrigger() {
             if(logstash_output.length != 0) {
                 res = convertDevToTest("", logstash_output)
                 switchMode()
-                inputEditor.getSession().setValue(jsyaml.safeDump(res, options={
+                yaml = jsyaml.safeDump(res, options={
                     "noRefs": true,
                     "lineWidth": 1000,
                     "schema": jsyaml.JSON_SCHEMA
-                }), -1)
+                })
+                yaml = yaml.replace(/^  - input/gm, "\n  - input")
+                yaml = yaml.replace(/^\b/gm, "\n")
+                yaml = yaml.replace(/^\n/, "")
+                inputEditor.getSession().setValue(yaml, -1)
                 resizeEditorForContent(inputEditor, 50)
                 jumpTo("input_data_title")
             } else {
