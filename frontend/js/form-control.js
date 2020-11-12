@@ -166,10 +166,11 @@ function userInputValid() {
         $('#input_data_title').removeClass("text-danger");
       } catch (e) {
         $('#input_data_title').addClass("text-danger");
-        error_reason = "The configuration isn't a correct <b>YAML</b> format"
+        error_reason = "The configuration isn't a correct <b>YAML</b> format :<br/>" + escapeHtml(e.message.slice(0, 100)).replace(/\n/g, "<br/>")
         redirectToLocation = "input_data_textarea"
         input_valid = false;
         latestTestConfiguration = {}
+        error_opt = { timeOut: 10000 }
       }
     }
   }
