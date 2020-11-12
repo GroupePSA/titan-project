@@ -37,12 +37,11 @@ function convertDevToTest(parent, array) {
                                 } else {
                                   fieldsToSkip.push("@timestamp")
                                 }
-                            } catch (e) {console.log(e)}
+                            } catch (e) {}
                         } else {
                             fields[key] = value
                         }
                     } else if(!/\[@_metadata\]/.test(fullKey)) {
-                        console.log(fullKey)
                         fields[fullKey] = value
                     }
                 }
