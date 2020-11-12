@@ -67,10 +67,12 @@ function enableTestMode(config) {
 function switchMode() {
   if (mode == "dev") {
     enableTestMode()
+    resizeEditorForContent(inputEditor, 50)
     saveSession()
     toastr.success("Enabled test mode", "Success")
   } else {
     enableDevMode()
+    resizeEditorForContent(inputEditor, 20)
     saveSession()
     toastr.success("Enabled dev mode", "Success")
   }

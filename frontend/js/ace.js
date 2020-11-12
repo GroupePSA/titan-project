@@ -220,7 +220,7 @@ function resizeEditorForContent(editor, maxLinesShowed) {
         docNumber = maxLinesShowed
     }
 
-    var height = (lineHeight + 2) * docNumber
+    var height = (lineHeight + 3) * docNumber
     resizeEditor(editor, height)
 }
 
