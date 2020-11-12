@@ -121,7 +121,11 @@ function buildConvertTrigger() {
             if(logstash_output.length != 0) {
                 res = convertDevToTest("", logstash_output)
                 switchMode()
-                inputEditor.getSession().setValue(jsyaml.safeDump(res), -1)
+                inputEditor.getSession().setValue(jsyaml.safeDump(res, options={
+                    "noRefs": true,
+                    "lineWidth": 1000,
+                    "schema": jsyaml.JSON_SCHEMA
+                }), -1)
                 resizeEditorForContent(inputEditor, 50)
             } else {
                 toast.error("You need to launch the process before being able to convert it!", "Error")
