@@ -1,4 +1,4 @@
-// Build the yaml file from 
+// Build the yaml dev file from logstash output
 function convertDevToTest(parent, array) {
 
     var isRootEventLevel = (parent == "")
@@ -77,6 +77,7 @@ function convertDevToTest(parent, array) {
 
 }
 
+// Build the data sample from the tests
 function convertTestToDev(yamlRaw) {
     result = ""
     data = {}
