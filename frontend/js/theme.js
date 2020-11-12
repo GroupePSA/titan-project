@@ -38,9 +38,15 @@ function enableWhiteTheme() {
   console.debug("Enable white theme")
 }
 
+// Get the theme
+function isThemeWhite() {
+  return $('#css_theme_bootstrap').attr('href').includes('flatly')
+}
+
+
 // Change theme button rtrigger
 $('#change_theme').click(function () {
-  if ($('#css_theme_bootstrap').attr('href').includes('flatly')) {
+  if (isThemeWhite()) {
     enableBlackTheme()
     saveSession()
   } else {

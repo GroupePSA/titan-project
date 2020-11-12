@@ -27,7 +27,7 @@
 <body>
 
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary static-top" aria-label="Navbar top">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary static-top" aria-label="Navbar top" style="z-index: 10;">
     <div class="container">
       <a class="navbar-brand" href="#">Titan project</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
@@ -578,7 +578,7 @@
 
 
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary static-bot" style="margin-top: 1em; padding-bottom: 0px;" aria-label="Navbar bottom">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary static-bot" style="margin-top: 1em; padding-bottom: 0px; z-index: 10; position: relative;" aria-label="Navbar bottom">
 
     <div class="col-lg-2"></div>
 
@@ -643,6 +643,9 @@
   <script src="./js/mode.js"></script>
   <script src="./js/load-logstash-versions.js"></script>
   <script src="./js/main.js"></script>
+
+  <div id="left"></div>
+  <div id="right"></div>
 
 </body>
 

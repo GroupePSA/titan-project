@@ -72,3 +72,7 @@
 .jsondiffpatch-added .jsondiffpatch-property-name, .jsondiffpatch-added .jsondiffpatch-value pre, .jsondiffpatch-modified .jsondiffpatch-right-value pre, .jsondiffpatch-textdiff-added {
   background: #306d30;
 }
+
+#left, #right {
+  background: #375a7f;
+}

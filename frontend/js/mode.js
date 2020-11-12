@@ -29,6 +29,12 @@ function enableDevMode(config) {
 
   enableGuessFile()
 
+  if(isThemeWhite()) {
+    $("#top, #bottom, #left, #right").css("background", "#2C3E50")
+  } else {
+    $("#top, #bottom, #left, #right").css("background", "#375a7f")
+  }
+
   console.debug("Enabled dev mode")
 }
 
@@ -59,6 +65,12 @@ function enableTestMode(config) {
   disableGuessFile()
 
   $("#output").html("The testscases result will be shown here !")
+
+  if(isThemeWhite()) {
+    $("#left, #right").css("background", "#18BC9C")
+  } else {
+    $("#left, #right").css("background", "#00bc8c")
+  }
 
   console.debug("Enabled test mode")
 }   

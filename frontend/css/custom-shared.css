@@ -13,3 +13,17 @@
 .toggle {
   float: right;
 }
+
+#top, #bottom, #left, #right {
+  opacity: 0.3;
+  position: fixed;
+  z-index:9; 
+}
+
+#left, #right {
+	top: 0; bottom: 0;
+	width: 5px;
+}
+
+#left { left: 0; }
+#right { right: 0; }
