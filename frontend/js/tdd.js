@@ -126,6 +126,7 @@ function buildConvertTrigger() {
                     "schema": jsyaml.JSON_SCHEMA
                 }), -1)
                 resizeEditorForContent(inputEditor, 50)
+                jumpTo("input_data_title")
             } else {
                 toast.error("You need to launch the process before being able to convert it!", "Error")
             }
@@ -136,6 +137,7 @@ function buildConvertTrigger() {
             switchMode()
             inputEditor.getSession().setValue(res)
             resizeEditorForContent(inputEditor, 20)
+            jumpTo("input_data_title")
         }
     });
 }
