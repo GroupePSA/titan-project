@@ -187,7 +187,7 @@ function findParsingOptimizationAdvices(parent, array) {
     // ECS version v1.6.0
     var ecs_fields_root = ["agent", "as", "base", "client", "cloud", "code_signature", "container", "destination", "dll", "dns", "ecs", "error", "event", "file", "geo", "group", "hash", "host", "http", "interface", "log", "network", "observer", "organization", "os", "package", "pe", "process", "registry", "related", "rule", "server", "service", "source", "thread", "tls", "tracing", "url", "user", "user_agent", "vlan", "vulnerability", "x509"]
 
-    var fieldConversionBlacklist = ["port"]
+    var fieldConversionBlacklist = ["port", "http.version"]
     var fieldArrayBlacklist = ["related.hosts", "base.tags", "container.image.tag", "dns.answers", "dns.header_flags", "dns.resolved_ip", "event.category", "event.type", "host.ip", "host.mac", "observer.ip", "observer.mac", "process.args", "registry.data.strings", "related.hash", "related.hosts", "related.ip", "related.user", "rule.author", "threat.tactic.id", "threat.tactic.name", "threat.tactic.reference", "threat.technique.id", "threat.technique.name", "threat.technique.reference", "tls.client.certificate_chain", "tls.server.certificate_chain", "tls.server.certificate_chain", "user.roles", "vulnerability.category", "x509.alternative_names", "x509.issuer.common_name", "x509.issuer.country", "x509.issuer.locality", "x509.issuer.organization", "x509.issuer.organizational_unit", "x509.issuer.state_or_province", "x509.subject.common_name", "x509.subject.country", "x509.subject.locality", "x509.subject.organization", "x509.subject.organizational_unit", "x509.subject.state_or_province"]
 
     if (isRootEventLevel) {
@@ -285,7 +285,7 @@ function findParsingOptimizationAdvices(parent, array) {
             str = '<li>Field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
             str += " got <b>multiple types</b> : " + keys[key]["types"].join(", ") + "</li>"
             $("#parsing_advices").append(str);
-        } else if (keys[key]["types"].length == 1 && keys[key]["guessType"].length == 1 && keys[key]["types"][0] != keys[key]["guessType"][0] && !fieldConversionBlacklist.includes(key)) {
+        } else if (keys[key]["types"].length == 1 && keys[key]["guessType"].length == 1 && keys[key]["types"][0] != keys[key]["guessType"][0] && !fieldConversionBlacklist.includes(fieldname)) {
             advicesShouldBeShown = true
             str = '<li>Field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
             str += " of type " + keys[key]["types"][0] + " could probably be <b>convert</b> into " + keys[key]["guessType"][0] + "</li>"
