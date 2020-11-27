@@ -41,3 +41,11 @@ services:
       args:
         LOGSTASH_VERSION: "7.9.3"
         JDK_VERSION: "14"
+
+  logstash_7.10.0:
+    image: titan-project-logstash:7.10.0
+    build: 
+      context: .
+      args:
+        LOGSTASH_VERSION: "7.10.0"
+        JDK_VERSION: "14"
