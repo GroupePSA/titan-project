@@ -416,14 +416,17 @@ function sortDictionary(dict) {
 
 // Display diff between Logstash results & expected results for 'test' mode
 function refreshLogstashDiffDisplay() {
-    var res = buildPreOutputButton("Build log sample")
+    var pre_res = buildPreOutputButton("Build log sample")
+    var res = ""
     var successfulTests = 0
     var maxTextSize = 60
 
     var logstash_output_stderr_arr = logstash_output_stderr.split('\n')
     for (var i = 0 ; i < logstash_output_stderr_arr.length ; i++) {
         var line = logstash_output_stderr_arr[i]
-        res = res + "<span class='text-danger'>" + line + "</span>\n"
+        if (line.trim().length != 0) {
+            res = res + "<span class='text-danger'>" + line + "</span>\n"
+        }
     }
 
     for(var i = 0 ; i < logstash_testing_result.length; i++) {
@@ -461,8 +464,11 @@ function refreshLogstashDiffDisplay() {
             successfulTests += 1
         }
     }
+
     if(res.trim() == "") {
         res = "The testscases result will be shown here !"
+    } else {
+        res = pre_res + res
     }
 
     $('#output').html(res);
