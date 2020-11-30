@@ -46,6 +46,7 @@ services:
     image: titan-project-logstash:7.10.0
     build: 
       context: .
+      dockerfile: Dockerfile7.10plus
       args:
         LOGSTASH_VERSION: "7.10.0"
         JDK_VERSION: "14"
