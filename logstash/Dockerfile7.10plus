@@ -46,4 +46,6 @@ RUN chmod +x /entrypoint.sh /entrypoint-tdd.sh
 
 USER logstash
 
+ENV JAVA_HOME=/usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64
+
 ENTRYPOINT [ "/entrypoint.sh" ]
