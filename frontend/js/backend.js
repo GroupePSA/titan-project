@@ -69,6 +69,7 @@ function cleanLogstashStdout(stdout) {
             && !/^\[\d+.*WARN.*logstash\.agent.*stopping pipeline.*$/.test(line)
             && !/^\[\d+.*org\.logstash\.instrument\.metrics\.gauge\.LazyDelegatingGauge.*A gauge metric.*This may result in invalid serialization.*$/.test(line)
             && !/^.*\[main\] 'pipeline\.ordered' is enabled and is likely less efficient, consider disabling if preserving event order is not necessary$/.test(line)
+            && !/^Using bundled JDK.*$/.test(line)
             && !/^The stdin plugin is now waiting for input:$/.test(line)) {
             stdout_cleaned.push(line)
         }
