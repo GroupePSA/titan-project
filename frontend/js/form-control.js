@@ -3,7 +3,10 @@
 //////////////////
 
 var logstash_output = ""
+var logstash_output_stderr = ""
 var remote_file_hash = undefined
+var logstash_testing_result = []
+var job_started = false
 
 // Manage list of extra fields
 

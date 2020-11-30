@@ -467,7 +467,11 @@ function refreshLogstashDiffDisplay() {
     }
 
     if(res.trim() == "") {
-        res = "The testscases result will be shown here !"
+        if(job_started) {
+            res = "No data received :("
+        } else {
+            res = "The testscases result will be shown here !"
+        }
     } else {
         res = pre_res + res
     }
@@ -523,7 +527,8 @@ function refreshLogstashLogDisplay() {
     var stderr_errors_lines = logstash_output_stderr_arr.length
     var matchNumber = 0
     var realLinesNumber = 0
-    var res = buildPreOutputButton("Build the dev spec")
+    var pre_res = buildPreOutputButton("Build the dev spec")
+    var res = ""
 
     for (var i = 0; i < lines.length; i++) {
 
@@ -569,10 +574,16 @@ function refreshLogstashLogDisplay() {
 
     if (res.length == 0) {
         if (logstash_output.length == 0) {
-            res = "No data received :("
+            if(job_started) {
+                res = "No data received :("
+            } else {
+                res = "The Logstash output will be shown here !"
+            }
         } else {
             res = "Nothing match your filter :("
         }
+    } else {
+        res = pre_res + res
     }
 
 
@@ -746,6 +757,8 @@ $('#start_process').click(function () {
         $("#download_output").addClass('disabled');
 
         latest_logstash_run = Date.now()
+
+        job_started = true
 
         $.ajax({
             url: api_url + "/logstash/start",
