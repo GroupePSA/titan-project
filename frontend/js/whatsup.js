@@ -67,7 +67,7 @@ function showWhatsUpIfNeeded() {
 
     var shouldBeDisplayed = false
 
-    for(var i in whatsup) {
+    for(var i=whatsup.length-1 ; i >= 0 ; i--) {
         var news = whatsup[i]
         if (userVersion < news.version) {
             shouldBeDisplayed = true
