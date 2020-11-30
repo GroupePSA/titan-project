@@ -50,6 +50,18 @@ var whatsup = [
         news: [
             "Corrected one bug that may cause @metadata to not being displayed"
         ]
+    },
+    {
+        version: 7,
+        date: "30 november 2020",
+        news: [
+            "Added a tdd (test-driven development) mode",
+            "Frontend loading should be faster",
+            "Removed some useless message from Logstash outputs",
+            "Added warning about ECS fields collisions",
+            "Some improvement in Logstash code coloration",
+            "Default examples use ECS"
+        ]
     }
 ]
 
