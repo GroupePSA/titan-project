@@ -54,7 +54,7 @@
               <a class="dropdown-item" id="change_text_wrapping" href="#">
                 <i class="fas fa-stream" aria-hidden="true"> Output text wrapping</i>
               </a>
-              <div class="dropdown-divider"></div>
+              <div class="dropdown-divider" id="divider_1_dev"></div>
               <a class="dropdown-item" id="change_parsing_advices" href="#">
                 <i class="fas fa-comment-dots" aria-hidden="true"> Parsing advices</i>
               </a>
@@ -75,9 +75,9 @@
                   current session</i></a>
               <div id="share_conf_header" class="dropdown-divider"></div>
               <a id="share_conf_box" class="dropdown-item" href="#"><i class="fas fa-share-alt" onclick="shareConf()" aria-hidden="true"> Share my conf</i></a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#"><i class="fab fa-html5" onclick="exportConfigToHuman('html')" aria-hidden="true"><strong> Show summary as HTML</strong></i></a>
-              <a class="dropdown-item" href="#"><i class="fab fa-markdown" onclick="exportConfigToHuman('markdown')" aria-hidden="true"><strong> Export summary to Markdown</strong></i></a>
+              <div class="dropdown-divider" id="divider_2_dev"></div>
+              <a class="dropdown-item" href="#" id="html_summary_box"><i class="fab fa-html5" onclick="exportConfigToHuman('html')" aria-hidden="true"><strong> Show summary as HTML</strong></i></a>
+              <a class="dropdown-item" href="#" id="markdown_export_box"><i class="fab fa-markdown" onclick="exportConfigToHuman('markdown')" aria-hidden="true"><strong> Export summary to Markdown</strong></i></a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="#"><i class="fas fa-history" onclick="showSessionHistory()" aria-hidden="true"> History</i></a>
               </div>

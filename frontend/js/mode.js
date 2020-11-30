@@ -35,6 +35,8 @@ function enableDevMode(config) {
     $("#top, #bottom, #left, #right").css("background", "#375a7f")
   }
 
+  $("#markdown_export_box,#html_summary_box,#change_parsing_advices,#change_debug_mode,#divider_1_dev,#divider_2_dev").removeClass('d-none')
+
   console.debug("Enabled dev mode")
 }
 
@@ -71,6 +73,8 @@ function enableTestMode(config) {
   } else {
     $("#left, #right").css("background", "#00bc8c")
   }
+
+  $("#markdown_export_box,#html_summary_box,#change_parsing_advices,#change_debug_mode,#divider_1_dev,#divider_2_dev").addClass('d-none')
 
   console.debug("Enabled test mode")
 }   
