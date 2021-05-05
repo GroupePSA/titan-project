@@ -2,6 +2,11 @@
 // Backend communication //
 ///////////////////////////
 
+// Build the button for the output convertion to other mode
+function buildPreOutputButton(text) {
+    return '<button type="submit" class="btn btn-light" id="convert" style="position:absolute; top: 1em; right:1em; font-size: 0.8em;">' + text + '</button>'
+}
+
 // Escape a string to html
 function escapeHtml(unsafe) {
     return unsafe
@@ -63,6 +68,10 @@ function cleanLogstashStdout(stdout) {
             && !/^\[\d+.*WARN.*logstash\.config\.source.*Ignoring.*pipelines.yml.*$/.test(line)
             && !/^\[\d+.*WARN.*logstash\.agent.*stopping pipeline.*$/.test(line)
             && !/^\[\d+.*org\.logstash\.instrument\.metrics\.gauge\.LazyDelegatingGauge.*A gauge metric.*This may result in invalid serialization.*$/.test(line)
+            && !/^.*\[main\] 'pipeline\.ordered' is enabled and is likely less efficient, consider disabling if preserving event order is not necessary$/.test(line)
+            && !/^Using bundled JDK.*$/.test(line)
+            && !/^Using JAVA_HOME defined java.*$/.test(line)
+            && !/^WARNING, using JAVA_HOME.*$/.test(line)
             && !/^The stdin plugin is now waiting for input:$/.test(line)) {
             stdout_cleaned.push(line)
         }
@@ -83,6 +92,8 @@ function cleanLogstashStderr(stderr) {
             && !/^WARNING: All illegal access operations will be denied in a future release$/.test(line)
             && !/^OpenJDK 64-Bit Server VM warning: Using the ParNew young collector with the Serial old collector is deprecated and will likely be removed in a future release$/.test(line)
             && !/^WARNING: An illegal reflective access operation has occurred$/.test(line)
+            && !/^WARNING: Illegal reflective access by org\.jruby\.ext\.openssl\.SecurityHelper.*$/.test(line)
+            && !/^WARNING: Please consider reporting this to the maintainers of org\.jruby\.ext\.openssl\.SecurityHelper$/.test(line)
             && !/^Thread\.exclusive is deprecated, use Thread::Mutex$/.test(line)) {
             stderr_cleaned.push(line)
         }
@@ -101,7 +112,7 @@ function logstashParsingProblem() {
         if (/^\[\d+.*\[ERROR\s*\].*$/.test(line)) {
             return { isProblem: true, cause: "logstash", filter: "[ERROR" }
         }
-        if (line.startsWith("{")) {
+        if (line.startsWith("{") && line.endsWith("}")) {
             var values = JSON.parse(line)
             if ("tags" in values) {
                 for (var j in values.tags) {
@@ -176,8 +187,11 @@ function findParsingOptimizationAdvices(parent, array) {
 
     var fieldsToSkip = []
     var realEventNumber = 0
+    // ECS version v1.6.0
+    var ecs_fields_root = ["agent", "as", "base", "client", "cloud", "code_signature", "container", "destination", "dll", "dns", "ecs", "error", "event", "file", "geo", "group", "hash", "host", "http", "interface", "log", "network", "observer", "organization", "os", "package", "pe", "process", "registry", "related", "rule", "server", "service", "source", "thread", "tls", "tracing", "url", "user", "user_agent", "vlan", "vulnerability", "x509"]
 
-    var fieldConversionBlacklist = ["port"]
+    var fieldConversionBlacklist = ["port", "http.version"]
+    var fieldArrayBlacklist = ["related.hosts", "base.tags", "container.image.tag", "dns.answers", "dns.header_flags", "dns.resolved_ip", "event.category", "event.type", "host.ip", "host.mac", "observer.ip", "observer.mac", "process.args", "registry.data.strings", "related.hash", "related.hosts", "related.ip", "related.user", "rule.author", "threat.tactic.id", "threat.tactic.name", "threat.tactic.reference", "threat.technique.id", "threat.technique.name", "threat.technique.reference", "tls.client.certificate_chain", "tls.server.certificate_chain", "tls.server.certificate_chain", "user.roles", "vulnerability.category", "x509.alternative_names", "x509.issuer.common_name", "x509.issuer.country", "x509.issuer.locality", "x509.issuer.organization", "x509.issuer.organizational_unit", "x509.issuer.state_or_province", "x509.subject.common_name", "x509.subject.country", "x509.subject.locality", "x509.subject.organization", "x509.subject.organizational_unit", "x509.subject.state_or_province"]
 
     if (isRootEventLevel) {
         fieldsToSkip = ["@_metadata", "@timestamp", "@version", "host", "message"]
@@ -185,7 +199,7 @@ function findParsingOptimizationAdvices(parent, array) {
 
     for (var i = 0; i < array.length; i++) {
         var line = array[i]
-        if (line.startsWith("{")) {
+        if (line.startsWith("{") && line.endsWith("}")) {
             realEventNumber += 1
             var obj = JSON.parse(line)
             for (var key in obj) {
@@ -274,12 +288,12 @@ function findParsingOptimizationAdvices(parent, array) {
             str = '<li>Field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
             str += " got <b>multiple types</b> : " + keys[key]["types"].join(", ") + "</li>"
             $("#parsing_advices").append(str);
-        } else if (keys[key]["types"].length == 1 && keys[key]["guessType"].length == 1 && keys[key]["types"][0] != keys[key]["guessType"][0] && !fieldConversionBlacklist.includes(key)) {
+        } else if (keys[key]["types"].length == 1 && keys[key]["guessType"].length == 1 && keys[key]["types"][0] != keys[key]["guessType"][0] && !fieldConversionBlacklist.includes(fieldname)) {
             advicesShouldBeShown = true
             str = '<li>Field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
             str += " of type " + keys[key]["types"][0] + " could probably be <b>convert</b> into " + keys[key]["guessType"][0] + "</li>"
             $("#parsing_advices").append(str);
-        } else if (keys[key]["types"].length == 1 && keys[key]["types"][0] == "array") {
+        } else if (keys[key]["types"].length == 1 && keys[key]["types"][0] == "array" && !fieldArrayBlacklist.includes(fieldname)) {
             advicesShouldBeShown = true
             str = '<li>Field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
             str += " is an <b>array</b>. Be aware that not many visualizations allow use of that kind of field in Kibana.</li>"
@@ -288,6 +302,11 @@ function findParsingOptimizationAdvices(parent, array) {
             advicesShouldBeShown = true
             str = '<li>Value of field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
             str += " could probably be <b>trimed</b>, as it sometime start or end with blanck characters</li>"
+            $("#parsing_advices").append(str);
+        } else if (isRootEventLevel && keys[key]["types"].length == 1 && keys[key]["types"][0] == "string" && ecs_fields_root.includes(key)) {
+            advicesShouldBeShown = true
+            str = '<li>Value of field <a href="#output" onclick="applyFilterFieldname(\'' + key + '\')">' + fieldname + "</a>"
+            str += " is a string, and may provoque type collision if you're willing to use <a target='_blank' href='https://www.elastic.co/guide/en/ecs/current/index.html'>Elasticsearch ECS</a> in the futur (object expected)</li>"
             $("#parsing_advices").append(str);
         }
     }
@@ -398,8 +417,93 @@ function sortDictionary(dict) {
     return tempDict;
 }
 
-// Display logstash log with formatting
+// Display diff between Logstash results & expected results for 'test' mode
+function refreshLogstashDiffDisplay() {
+    var pre_res = buildPreOutputButton("Build log sample")
+    var res = ""
+    var successfulTests = 0
+    var maxTextSize = 60
 
+    var logstash_output_stderr_arr = logstash_output_stderr.split('\n')
+    for (var i = 0 ; i < logstash_output_stderr_arr.length ; i++) {
+        var line = logstash_output_stderr_arr[i]
+        if (line.trim().length != 0) {
+            res = res + "<span class='text-danger'>" + line + "</span>\n"
+        }
+    }
+
+    for(var i = 0 ; i < logstash_testing_result.length; i++) {
+        var expected = JSON.parse(logstash_testing_result[i].expected)
+        var real = JSON.parse(logstash_testing_result[i].real)
+        var delta = jsondiffpatch.diff(expected, real);
+
+        var case_color = (delta == undefined ? "found-ok" : "found-none")
+
+        var testedLine = undefined
+        try {
+            testedLine = latestTestConfiguration.testcases[i].description.slice(0, maxTextSize)
+            if(testedLine.length != latestTestConfiguration.testcases[i].description.length) {
+                testedLine = testedLine + "..."
+            }
+        } catch (error) {}
+
+        if(testedLine == undefined) {
+            try {
+                testedLine = latestTestConfiguration.testcases[i].input[0].slice(0, maxTextSize)
+                if(testedLine.length != latestTestConfiguration.testcases[i].input[0].length) {
+                    testedLine = testedLine + "..."
+                }
+            } catch (error) {
+                testedLine = "<i>Not found</i>"
+            }
+        }
+        
+        res += "<div class='row col-lg-10' style='margin-top: 1em;margin-bottom: 0.5em'><h5 class='col-lg-3 " + case_color + "'>Test case " + (i + 1) + ":</h5>"
+        res += "<p class='col-lg-9'>" + escapeHtml(testedLine) + "</p></div>"
+
+        if (delta != undefined) {
+            res += jsondiffpatch.formatters.html.format(delta, expected)
+        } else {
+            successfulTests += 1
+        }
+    }
+
+    if(res.trim() == "") {
+        if(job_started) {
+            res = "No data received :("
+        } else {
+            res = "The testscases result will be shown here !"
+        }
+    } else {
+        res = pre_res + res
+    }
+
+    $('#output').html(res);
+    buildConvertTrigger()
+
+    if(successfulTests == logstash_testing_result.length) {
+        manageResultLogstashProcess("success", "Tests OK", "All tests passed!")
+    } else if (successfulTests != 0) {
+        manageResultLogstashProcess("error", "Tests NOK", "Only " + successfulTests + " / " + logstash_testing_result.length + " tests successful")
+    } else {
+        manageResultLogstashProcess("error", "Tests really NOK", "No tests successful")
+    }
+    
+}
+
+// Choose what to display on Logstash output part
+function refreshLogstasOutputDisplay() {
+    // In the case of nothing concluant, we just fallback on default view
+    if(mode == "dev") {
+        console.debug("Switching to log mode")
+        refreshLogstashLogDisplay()
+    } else {
+        console.debug("Switching to dev mode")
+        refreshLogstashDiffDisplay()
+    }
+}
+
+// Display logstash log with formatting for dev mode
 function refreshLogstashLogDisplay() {
     var filter_value = $('#filter_display').val()
     var filter_regex_enabled = $('#filter_regex_enabled').is(':checked')
@@ -419,14 +523,13 @@ function refreshLogstashLogDisplay() {
         number_lines_display = parseInt(number_lines_display, 10)
     }
 
-    $("#number_events_displayed_container").removeClass("d-none")
-
     var logstash_output_stderr_arr = logstash_output_stderr.split('\n')
     var lines = logstash_output_stderr_arr.concat(logstash_output)
 
     var stderr_errors_lines = logstash_output_stderr_arr.length
     var matchNumber = 0
     var realLinesNumber = 0
+    var pre_res = buildPreOutputButton("Build the dev spec")
     var res = ""
 
     for (var i = 0; i < lines.length; i++) {
@@ -473,36 +576,47 @@ function refreshLogstashLogDisplay() {
 
     if (res.length == 0) {
         if (logstash_output.length == 0) {
-            res = "No data received :("
+            if(job_started) {
+                res = "No data received :("
+            } else {
+                res = "The Logstash output will be shown here !"
+            }
         } else {
             res = "Nothing match your filter :("
         }
+    } else {
+        res = pre_res + res
     }
 
 
 
     // We display the number of events we got / we found
 
-    if (filter_enabled) {
+    if(mode == "dev") {
+        $("#number_events_displayed_container").removeClass("d-none")
 
-        if (matchNumber > realLinesNumber) {
-            matchNumber = realLinesNumber
+        if (filter_enabled) {
+
+            if (matchNumber > realLinesNumber) {
+                matchNumber = realLinesNumber
+            }
+
+            var color = "found-some"
+            if (matchNumber == realLinesNumber) {
+                color = "found-ok"
+            } else if (matchNumber == 0) {
+                color = "found-none"
+            }
+
+            $('#number_events_displayed').html("<span class='" + color + "'>" + matchNumber + " / " + realLinesNumber + "</span> events <b>matched</b>")
+        } else {
+            $('#number_events_displayed').html("<b>" + realLinesNumber + "</b> total events")
+
         }
-
-        var color = "found-some"
-        if (matchNumber == realLinesNumber) {
-            color = "found-ok"
-        } else if (matchNumber == 0) {
-            color = "found-none"
-        }
-
-        $('#number_events_displayed').html("<span class='" + color + "'>" + matchNumber + " / " + realLinesNumber + "</span> events <b>matched</b>")
-    } else {
-        $('#number_events_displayed').html("<b>" + realLinesNumber + "</b> total events")
-
     }
 
     $('#output').html(res);
+    buildConvertTrigger()
 }
 
 // Manage if backend fail to treat user input
@@ -549,7 +663,7 @@ function applyFilter(filter, reverse) {
     $('#filter_reverse_match_enabled').prop('checked', reverse)
     $('#filter_display').val(filter)
 
-    refreshLogstashLogDisplay()
+    refreshLogstasOutputDisplay()
 }
 
 // Apply a custom filter that will be surround by "<value>"
@@ -611,7 +725,8 @@ $('#start_process').click(function () {
             logstash_filter: editor.getSession().getValue(),
             input_extra_fields: getFieldsAttributesValues(),
             logstash_version: $('#logstash_version :selected').text(),
-            trace: enableDebug
+            trace: enableDebug,
+            mode: mode
         };
 
         if (latest_logstash_run != undefined && (Date.now() - latest_logstash_run) < refreshTimeCacheInvalidation) {
@@ -619,7 +734,12 @@ $('#start_process').click(function () {
         }
 
         if (remote_file_hash == undefined) {
-            body.input_data = inputEditor.getSession().getValue()
+            if(mode == "dev") {
+                body.input_data = inputEditor.getSession().getValue()
+            } else {
+                body.input_data = jsyaml.safeDump(latestTestConfiguration)
+            }
+            
         } else {
             body.filehash = remote_file_hash
         }
@@ -639,6 +759,8 @@ $('#start_process').click(function () {
         $("#download_output").addClass('disabled');
 
         latest_logstash_run = Date.now()
+
+        job_started = true
 
         $.ajax({
             url: api_url + "/logstash/start",
@@ -667,8 +789,9 @@ $('#start_process').click(function () {
 
                 logstash_output = cleanLogstashStdout(data.job_result.stdout)
                 logstash_output_stderr = cleanLogstashStderr(data.job_result.stderr)
+                logstash_testing_result = (mode == "test" && data.job_result.testCases != undefined ? data.job_result.testCases : [])
 
-                if(enableParsingAdvices) {
+                if(enableParsingAdvices && mode == "dev") {
                     findParsingOptimizationAdvices("", logstash_output)
                 }
 
@@ -686,7 +809,7 @@ $('#start_process').click(function () {
                         notif = manageResultLogstashProcess('warning', 'Parsing problems', 'Logstash <a class="alert-link" href="#output" onclick="applyFilter(\'' + parsingResult.filter + '\')">failed to parse</a> some of your events')
                         redirectToastrClick(notif, "logstash_filter_textarea")
                     }
-                } else {
+                } else if (mode == "dev") {
                     notif = manageResultLogstashProcess('success', 'Success', 'Configuration parsing is done !')
                     redirectToastrClick(notif, "output")
                 }
@@ -698,7 +821,7 @@ $('#start_process').click(function () {
 
                 var response_time_formatted = (data.job_result.response_time / 1000).toFixed(1)
 
-                refreshLogstashLogDisplay()
+                refreshLogstasOutputDisplay()
                 $("#backend_response_time").text(response_time_formatted)
                 $("#start_process").removeClass('disabled');
                 $("#download_output").removeClass('disabled');

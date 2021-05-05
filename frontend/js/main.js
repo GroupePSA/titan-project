@@ -18,10 +18,7 @@ if(enable_file_upload) {
 }
 
 if(!enable_guess_file) {
-    $('#column_guess_file').addClass('d-none')
-    $('#column_empty_right').addClass('d-none')
-    $('#column_clear_form').addClass('col-lg-4')
-    $('#column_start_process').addClass('col-lg-4')
+    disableGuessFile()
 }
 
 if(!enable_share_conf) {

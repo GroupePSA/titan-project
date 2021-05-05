@@ -6,7 +6,13 @@
 function tryToGuessFilter() {
     var body = {}
     if (remote_file_hash == undefined) {
-        body.input_data = inputEditor.getSession().getValue()
+        if(mode == "dev") {
+            body.input_data = inputEditor.getSession().getValue()
+        } else {
+            var config = getConfig()
+            body.input_data = config["input_data"] || ""
+            console.log(body.input_data)
+        }
     } else {
         body.filehash = remote_file_hash
     }
@@ -23,6 +29,8 @@ function tryToGuessFilter() {
 
                 if (data.custom_codec.length != 0) {
                     enableMultilineCodec(data.custom_codec)
+                } else {
+                    disableMultilineCodec()
                 }
 
                 var notif =  toastr.success('Guess of a Logstash configuration is done !', 'Success')

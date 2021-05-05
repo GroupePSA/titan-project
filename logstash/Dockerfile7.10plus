@@ -18,9 +18,9 @@ WORKDIR /logstash
 
 ARG LOGSTASH_VERSION
 
-RUN wget -q https://artifacts.elastic.co/downloads/logstash/logstash-${LOGSTASH_VERSION}.tar.gz \
-    && tar -C /logstash -zxsf logstash-${LOGSTASH_VERSION}.tar.gz logstash-${LOGSTASH_VERSION}/ --strip-components=1 \
-    && rm logstash-${LOGSTASH_VERSION}.tar.gz
+RUN wget -q https://artifacts.elastic.co/downloads/logstash/logstash-${LOGSTASH_VERSION}-linux-x86_64.tar.gz \
+    && tar -C /logstash -zxsf logstash-${LOGSTASH_VERSION}-linux-x86_64.tar.gz logstash-${LOGSTASH_VERSION}/ --strip-components=1 \
+    && rm logstash-${LOGSTASH_VERSION}-linux-x86_64.tar.gz
 
 RUN echo "" > /logstash/config/logstash.yml
 
@@ -45,5 +45,7 @@ USER root
 RUN chmod +x /entrypoint.sh /entrypoint-tdd.sh
 
 USER logstash
+
+ENV JAVA_HOME=/usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64
 
 ENTRYPOINT [ "/entrypoint.sh" ]

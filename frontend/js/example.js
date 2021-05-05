@@ -8,25 +8,13 @@ var examples = [
             {
                 name: "Syslog",
                 description: "A simple example on how to parse a basic syslog file format.",
-                input_data_filepath: "./sample/simple/data.txt",
-                filter_filepath: "./sample/simple/filter.conf",
-                input_data_attributes: [
-                    { attribute: "pilote", value: "system" },
-                    { attribute: "type", value: "syslog" },
-                    { attribute: "path", value: "/var/log/syslog" }
-                ],
-                custom_codec_filepath: undefined
+                config_filepath: "./sample/simple/config.json"
             },
             // Multiline (Java Stack Trace)
             {
                 name: "Multiline strack trace",
                 description: "A sample on how to use a custom codec (here multiline) with this web tool.",
-                input_data_filepath: "./sample/multiline/data.txt",
-                filter_filepath: "./sample/multiline/filter.conf",
-                input_data_attributes: [
-                    { attribute: "type", value: "java-stack-trace" }
-                ],
-                custom_codec_filepath: "./sample/multiline/multiline.codec"
+                config_filepath: "./sample/multiline/config.json"
             },
         ]
     },
@@ -40,21 +28,13 @@ var examples = [
                 name: "Simple example",
                 description: "An example to show how to parse a syslog file using dissect.",
                 input_data_filepath: "./sample/dissect-simple/data.txt",
-                filter_filepath: "./sample/dissect-simple/filter.conf",
-                input_data_attributes: [
-                    { attribute: "pilote", value: "system" },
-                    { attribute: "type", value: "syslog" }
-                ],
-                custom_codec_filepath: undefined
+                config_filepath: "./sample/dissect-simple/config.json"
             },
             // Basic csv
             {
                 name: "CSV Parsing example",
                 description: "An example on how to parse a CSV file using dissect.",
-                input_data_filepath: "./sample/dissect-csv/data.txt",
-                filter_filepath: "./sample/dissect-csv/filter.conf",
-                input_data_attributes: [],
-                custom_codec_filepath: undefined
+                config_filepath: "./sample/dissect-csv/config.json"
             },
         ]
     }
@@ -63,43 +43,16 @@ var examples = [
 
 // Factory method to generate examples
 function exampleFactory(conf) {
-    if (conf.input_data_filepath != undefined) {
-        $.ajax({
-            url: conf.input_data_filepath,
-            success: function (data) {
-                inputEditor.getSession().setValue(data, -1)
-                resizeEditorForContent(inputEditor)
-            }
-        });
-    }
-
-    if (conf.filter_filepath != undefined) {
-        $.ajax({
-            url: conf.filter_filepath,
-            success: function (data) {
-                editor.getSession().setValue(data, -1);
-                resizeEditorForContent(editor)
-            }
-        });
-    }
-
-    if (conf.input_data_attributes != undefined) {
-        applyFieldsAttributes(conf.input_data_attributes)
-    }
-
-    if (conf.custom_codec_filepath != undefined) {
-        $.ajax({
-            url: conf.custom_codec_filepath,
-            success: function (data) {
-                enableMultilineCodec(data)
-            }
-        });
-    } else {
-        disableMultilineCodec()
-    }
-
     fileUploadDisabled()
 
+    $.ajax({
+        url: conf.config_filepath,
+        success: function (config) {
+            loadConfig(config)
+            resizeEditorForContent(inputEditor)
+            resizeEditorForContent(editor)
+        }
+    });
 }
 
 // Init display of examples

@@ -18,14 +18,14 @@ services:
         LOGSTASH_VERSION: "5.6.16"
         JDK_VERSION: "8"
 
-  logstash_6.8.3:
-    image: titan-project-logstash:6.8.3
+  logstash_6.8.13:
+    image: titan-project-logstash:6.8.13
     build: 
       context: .
       args:
-        LOGSTASH_VERSION: "6.8.3"
+        LOGSTASH_VERSION: "6.8.13"
         JDK_VERSION: "11"
-  
+
   logstash_7.4.0:
     image: titan-project-logstash:7.4.0
     build: 
@@ -33,3 +33,20 @@ services:
       args:
         LOGSTASH_VERSION: "7.4.0"
         JDK_VERSION: "11"
+
+  logstash_7.9.3:
+    image: titan-project-logstash:7.9.3
+    build: 
+      context: .
+      args:
+        LOGSTASH_VERSION: "7.9.3"
+        JDK_VERSION: "14"
+
+  logstash_7.10.0:
+    image: titan-project-logstash:7.10.0
+    build: 
+      context: .
+      dockerfile: Dockerfile7.10plus
+      args:
+        LOGSTASH_VERSION: "7.10.0"
+        JDK_VERSION: "14"

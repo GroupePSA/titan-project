@@ -50,6 +50,18 @@ var whatsup = [
         news: [
             "Corrected one bug that may cause @metadata to not being displayed"
         ]
+    },
+    {
+        version: 7,
+        date: "30 november 2020",
+        news: [
+            "Added a tdd (test-driven development) mode",
+            "Frontend loading should be faster",
+            "Removed some useless message from Logstash outputs",
+            "Added warning about ECS fields collisions",
+            "Some improvement in Logstash code coloration",
+            "Default examples use ECS"
+        ]
     }
 ]
 
@@ -67,7 +79,7 @@ function showWhatsUpIfNeeded() {
 
     var shouldBeDisplayed = false
 
-    for(var i in whatsup) {
+    for(var i=whatsup.length-1 ; i >= 0 ; i--) {
         var news = whatsup[i]
         if (userVersion < news.version) {
             shouldBeDisplayed = true

@@ -1,6 +1,6 @@
 # Build dependencies
 
-FROM node:10-alpine as builder
+FROM node:15-alpine as builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
@@ -9,6 +9,8 @@ RUN npm run postinstall
 # Real image building
 
 FROM nginx:1.15.8
+
+COPY ./build/nginx.conf /etc/nginx/nginx.conf
 
 # Install curl for healthcheck
 RUN apt-get update

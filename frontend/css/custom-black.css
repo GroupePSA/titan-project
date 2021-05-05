@@ -59,3 +59,20 @@
 .app_editor_wrapper {
 	border: 0px solid #324837;
 }
+
+.jsondiffpatch-unchanged, .jsondiffpatch-movedestination {
+  color: inherit;
+}
+
+.jsondiffpatch-deleted .jsondiffpatch-property-name, .jsondiffpatch-deleted pre, .jsondiffpatch-modified .jsondiffpatch-left-value pre, .jsondiffpatch-textdiff-deleted {
+  background: #7d1919;
+  text-decoration: line-through;
+}
+
+.jsondiffpatch-added .jsondiffpatch-property-name, .jsondiffpatch-added .jsondiffpatch-value pre, .jsondiffpatch-modified .jsondiffpatch-right-value pre, .jsondiffpatch-textdiff-added {
+  background: #306d30;
+}
+
+#left, #right {
+  background: #375a7f;
+}

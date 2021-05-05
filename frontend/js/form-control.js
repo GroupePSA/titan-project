@@ -3,7 +3,10 @@
 //////////////////
 
 var logstash_output = ""
+var logstash_output_stderr = ""
 var remote_file_hash = undefined
+var logstash_testing_result = []
+var job_started = false
 
 // Manage list of extra fields
 
@@ -90,6 +93,40 @@ $('#enable_custom_codec').change(function () {
   }
 });
 
+// Complete the test configuration, if valid, with the extra infos provided by Titan-project
+
+function completeTestConfiguration(testConfiguration) {
+
+  // Codec
+  if ($('#enable_custom_codec').is(':checked') && !("codec" in testConfiguration)) {
+    testConfiguration["codec"] = $('#custom_codec_field').val()
+  }
+
+  // Extra input fields
+  var fieldsAttributes = getFieldsAttributesValues()
+  var configurationAttributes = ("fields" in testConfiguration ? testConfiguration["fields"] : {})
+  for (var i = 0; i < fieldsAttributes.length; i++) {
+    var key = fieldsAttributes[i].attribute
+    var value = fieldsAttributes[i].value
+    if (!(key in configurationAttributes)) {
+      configurationAttributes[key] = value
+    }
+  }
+  testConfiguration["fields"] = configurationAttributes
+
+  // Fields to ignore
+  var localIgnoredFields = ["@_metadata"]
+  var ignoredFields = ("ignore" in testConfiguration ? testConfiguration["ignore"] : [])
+  for(var i = 0 ; i < localIgnoredFields.length ; i++) {
+    if(!ignoredFields.includes(localIgnoredFields[i])) {
+      ignoredFields.push(localIgnoredFields[i])
+    }
+  }
+  testConfiguration["ignore"] = ignoredFields
+
+  return testConfiguration
+}
+
 // Check for input logs with empty lines at the end, and inform user in consequences
 
 function checkInputLogsEnding() {
@@ -103,6 +140,8 @@ function checkInputLogsEnding() {
     }
   }
 }
+
+latestTestConfiguration = {}
 
 // Validate the user input
 
@@ -123,7 +162,20 @@ function userInputValid() {
     input_valid = false;
     redirectToLocation = "input_data_textarea"
   } else {
-    $('#input_data_title').removeClass("text-danger");
+    if(mode == "test") {
+      try {
+        var testConfiguration = jsyaml.safeLoad(input_data);
+        latestTestConfiguration = completeTestConfiguration(testConfiguration)
+        $('#input_data_title').removeClass("text-danger");
+      } catch (e) {
+        $('#input_data_title').addClass("text-danger");
+        error_reason = "The configuration isn't a correct <b>YAML</b> format :<br/>" + escapeHtml(e.message.slice(0, 100)).replace(/\n/g, "<br/>")
+        redirectToLocation = "input_data_textarea"
+        input_valid = false;
+        latestTestConfiguration = {}
+        error_opt = { timeOut: 10000 }
+      }
+    }
   }
 
 
@@ -194,7 +246,9 @@ function userInputValid() {
     redirectToastrClick(notifWarning, redirectToLocation)
   }
 
-  checkInputLogsEnding()
+  if(mode == "dev") {
+    checkInputLogsEnding()
+  }
 
   return input_valid
 }
@@ -202,7 +256,7 @@ function userInputValid() {
 // Update the filter value
 function updateFilter() {
   saveSession()
-  refreshLogstashLogDisplay()
+  refreshLogstasOutputDisplay()
 }
 
 // Trigger for the search filter value
